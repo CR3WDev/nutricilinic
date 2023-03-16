@@ -1,16 +1,14 @@
-import { Routes, Route, Outlet, Link } from "react-router-dom";
-import { MainPage } from "./Pages/main";
+import { Routes, Route } from "react-router-dom";
 import { LoginPage } from "./Pages/Login";
+import { MenuPage } from "./Pages/menu";
 import "./App.css";
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/main" element={<MainPage />} />
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/*" element={<MenuPage />} />
+    </Routes>
   );
 }
 

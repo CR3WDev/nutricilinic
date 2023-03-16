@@ -1,54 +1,73 @@
 import { Card } from "primereact/card";
 import Logo from "../../Assets/Logo.svg";
 import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { InputMask } from "primereact/inputmask";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    sessionStorage.setItem("LoginResponseDTO", JSON.stringify(data));
+    console.log({ data });
     navigate("/main");
   };
   return (
-    <div className="h-screen flex justify-center items-center">
-      <Card>
-        <div className="flex justify-center pb-10">
-          <img src={Logo} alt="logo" />
+    <div className="h-screen flex justify-content-center align-items-center">
+      <Card style={{ width: "300px", maxWidth: "80vw" }}>
+        <div className="flex justify-content-center pb-4">
+          <img src={Logo} alt="" />
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex-col">
-            <InputText
-              placeholder="Usuário"
-              autoComplete="off"
-              {...(register("username"), { required: true })}
+            <InputMask
+              className="mb-2 w-12"
+              type="cpf"
+              id="cpf"
+              placeholder="CPF"
+              mask="999.999.999-99"
+              maxLength={11}
+              {...register("cpf", {
+                required: true,
+                minLength: 11,
+              })}
             />
-            {errors.username && <span>Esse campo é obrigatório</span>}
+            <div>
+              {errors.cpf && (
+                <span className="p-error">Campo obrigatório!</span>
+              )}
+            </div>
           </div>
-          <div className="flex-col">
-            <Password
-              className="pt-3"
+          <div>
+            <InputText
+              type="password"
+              className="mb-2 w-12"
               placeholder="Senha"
-              autoComplete="off"
+              id="password"
               {...register("password", { required: true })}
             />
-            {errors.password && <span>Esse campo é obrigatório2</span>}
+            {errors.password && (
+              <div>
+                <span className="p-error">Campo obrigatório</span>
+              </div>
+            )}
           </div>
-          <div className="flex justify-center py-5">
-            <Button label="ENTRAR" />
+          <div className="flex justify-content-center">
+            <Button
+              label="Entrar"
+              type="submit"
+              className="my-4"
+              severity="success"
+              rounded
+            />
           </div>
-          <span className="flex justify-center font-bold">
-            Esqueci minha senha!
-          </span>
         </form>
       </Card>
     </div>
