@@ -1,13 +1,15 @@
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { ACCESS_TOKEN_KEY } from "../../Utils/sessionStorageKeys";
 
 export const MainPage = () => {
   const navigate = useNavigate();
+
   const handleLogout = () => {
-    const loginResponse = sessionStorage.getItem("LoginResponseDTO");
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     navigate("/");
-    console.log(loginResponse);
   };
+
   return (
     <>
       <div className="flex justify-content-end p-2">
