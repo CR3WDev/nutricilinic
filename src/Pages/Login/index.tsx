@@ -1,26 +1,49 @@
 import { Card } from "primereact/card";
-import Logo from "../../Assets/Logo.svg";
+import { Toast } from 'primereact/toast';
+import Logo from "../../assets/Logo.svg";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { InputMask } from "primereact/inputmask";
+import { api } from "../../services/axios";
+import { useRef } from "react";
+
+interface FormLogin {
+  login: string;
+  senha: string;
+}
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+
+  const toast = useRef(null);
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors, isSubmitting },
+  } = useForm<FormLogin>();
 
-  const onSubmit = (data: any) => {
-    sessionStorage.setItem("LoginResponseDTO", JSON.stringify(data));
-    console.log({ data });
-    navigate("/main");
+  const onSubmit = async ({ login, senha }: FormLogin) => {
+
+    try {
+      const { data } = await api.post("/auth", {
+        login: login.replace(/[^0-9]/g, ""),
+        senha
+      });
+      sessionStorage.setItem("X-Access-Token", JSON.stringify(data.token));
+      navigate("/main");
+    } catch (error) {
+      toast.current.show({ severity: 'error', summary: 'Atenção', detail: 'Usuário ou senha inválidos' });
+    }
   };
+
   return (
     <div className="h-screen flex justify-content-center align-items-center">
+
+      <Toast ref={toast} />
+
       <Card style={{ width: "300px", maxWidth: "80vw" }}>
         <div className="flex justify-content-center pb-4">
           <img src={Logo} alt="" />
@@ -34,13 +57,13 @@ export const LoginPage = () => {
               placeholder="CPF"
               mask="999.999.999-99"
               maxLength={11}
-              {...register("cpf", {
+              {...register("login", {
                 required: true,
                 minLength: 11,
               })}
             />
             <div>
-              {errors.cpf && (
+              {errors.login && (
                 <span className="p-error">Campo obrigatório!</span>
               )}
             </div>
@@ -51,9 +74,9 @@ export const LoginPage = () => {
               className="mb-2 w-12"
               placeholder="Senha"
               id="password"
-              {...register("password", { required: true })}
+              {...register("senha", { required: true })}
             />
-            {errors.password && (
+            {errors.senha && (
               <div>
                 <span className="p-error">Campo obrigatório</span>
               </div>
@@ -66,6 +89,7 @@ export const LoginPage = () => {
               className="my-4"
               severity="success"
               rounded
+              loading={isSubmitting}
             />
           </div>
         </form>
