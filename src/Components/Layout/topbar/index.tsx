@@ -2,15 +2,38 @@ import { InputText } from "primereact/inputtext";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { Badge } from "primereact/badge";
+import { useRef } from "react";
+import { Menu } from "primereact/menu";
+import { MenuItem } from "primereact/menuitem";
 
 export const Topbar = () => {
+  const menu = useRef<Menu>(null);
   const navigate = useNavigate();
   const handleLogout = () => {
     const loginResponse = sessionStorage.getItem("LoginResponseDTO");
     navigate("/");
     console.log(loginResponse);
   };
+  const items: MenuItem[] = [
+    {
+      label: "Ajuda",
+      icon: "pi pi-refresh",
+      command: () => {},
+    },
+    {
+      label: "Notificações",
+      icon: "pi pi-bell",
+      command: () => {},
+    },
+    {
+      label: "Logout",
+      icon: "pi pi-power-off",
+      command: () => {
+        handleLogout();
+      },
+    },
+  ];
+
   return (
     <div className="flex m-2 " style={{ width: "calc(100vw - 250px)" }}>
       <span className="p-input-icon-left w-full">
@@ -29,27 +52,29 @@ export const Topbar = () => {
         }}
       >
         <div className="flex card">
-          <Button
-            icon="pi pi-question"
-            style={{ width: "36px", height: "36px" }}
-            className="p-button-text"
-            rounded
-          />
-
-          <i className="pi pi-bell p-overlay-badge">
-            <Badge value="2"></Badge>
-          </i>
           <Avatar
-            label="P"
+            label="MV"
             style={{ width: "36px", height: "36px" }}
             shape="circle"
           />
-          <Button
-            icon="pi pi-power-off"
-            style={{ width: "36px", height: "36px" }}
-            rounded
-            onClick={() => handleLogout()}
-          />
+          <div className="flex text-center">
+            <div style={{ width: "130px" }}>
+              <span className="font-semibold">Marcelo Victor</span>
+              <br />
+              <span>Nutricionista</span>
+            </div>
+            <div className="flex align-items-center">
+              <Menu model={items} popup ref={menu} />
+              <Button
+                text
+                style={{ width: "30px", height: "30px" }}
+                icon="pi pi-angle-down"
+                onClick={(e) => {
+                  if (menu.current) menu.current.toggle(e);
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
