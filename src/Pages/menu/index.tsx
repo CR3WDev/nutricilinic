@@ -13,9 +13,10 @@ export const MenuPage = () => {
       <div className="flex-col">
         <Topbar />
         <div
+          className="mx-4"
           style={{
-            width: "calc(100vw - 250px)",
-            height: "calc(100vh - 47.2px - 1rem)",
+            width: "calc(100vw - 278px)",
+            height: "calc(100vh - 47.2px - 2rem)",
           }}
         >
           <Routes>

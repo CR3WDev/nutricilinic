@@ -37,12 +37,13 @@ export const SidebarComponent = () => {
   return (
     <aside
       className="h-screen"
-      style={{ width: "250px", borderRight: "1px solid var(--surface-border)" }}
+      style={{ width: "230px", borderRight: "1px solid var(--surface-border)" }}
     >
       <div className="flex justify-content-center py-6">
         <img src={Logo} />
       </div>
       <ListBox
+        className="edited"
         itemTemplate={listBoxTemplate}
         style={{ border: "none" }}
         value={menuOptionSelected}

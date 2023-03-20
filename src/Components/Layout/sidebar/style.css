@@ -1,3 +1,3 @@
-.p-listbox .p-listbox-list .p-listbox-item {
-  padding: 0 !important;
+.edited .p-listbox-list li.p-listbox-item {
+  padding: 0;
 }

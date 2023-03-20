@@ -25,6 +25,7 @@ export const Topbar = () => {
       icon: "pi pi-bell",
       command: () => {},
     },
+    { separator: true },
     {
       label: "Logout",
       icon: "pi pi-power-off",
@@ -35,7 +36,7 @@ export const Topbar = () => {
   ];
 
   return (
-    <div className="flex m-2 " style={{ width: "calc(100vw - 250px)" }}>
+    <div className="flex mx-4 my-3 " style={{ width: "calc(100vw - 278px)" }}>
       <span className="p-input-icon-left w-full">
         <i className="pi pi-search" />
         <InputText
