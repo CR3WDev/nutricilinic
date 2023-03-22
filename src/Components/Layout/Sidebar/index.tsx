@@ -22,6 +22,12 @@ export const SidebarComponent = () => {
       icon: "pi pi-users",
       route: "/pacientes",
     },
+    {
+      name: "Usuários",
+      code: "usuarios",
+      icon: "pi pi-user",
+      route: "/usuarios",
+    },
   ];
   const listBoxTemplate = (option: any) => {
     return (

@@ -1,14 +1,12 @@
 import { Route, Routes } from "react-router-dom";
-import { AgendamentosPage } from "../../Pages/Agendamentos";
-import { MainPage } from "../../Pages/Main";
-import { PacientesPage } from "../../Pages/Pacientes";
+import { LoginPage } from "../../Pages/Login";
+import { MenuPage } from "../../Pages/Menu";
 
 export const ExternalRoutes = () => {
   return (
     <Routes>
-      <Route path="/main" element={<MainPage />} />
-      <Route path="/agendamentos" element={<AgendamentosPage />} />
-      <Route path="/pacientes" element={<PacientesPage />} />
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/*" element={<MenuPage />} />
     </Routes>
   );
 };

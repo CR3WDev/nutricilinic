@@ -1,6 +1,6 @@
 import { SidebarComponent } from "../../Components/Layout/Sidebar";
 import { Topbar } from "../../Components/Layout/Topbar";
-import { ExternalRoutes } from "../../Routes/ExternalRoutes";
+import { InternalRoutes } from "../../Routes/InternalRoutes";
 
 export const MenuPage = () => {
   return (
@@ -15,7 +15,7 @@ export const MenuPage = () => {
             height: "calc(100vh - 47.2px - 2rem)",
           }}
         >
-          <ExternalRoutes />
+          <InternalRoutes />
         </div>
       </div>
     </div>

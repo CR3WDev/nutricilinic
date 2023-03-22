@@ -1,8 +1,8 @@
 import "./App.css";
-import { InternalRoutes } from "./Routes/InternalRoutes";
+import { ExternalRoutes } from "./Routes/ExternalRoutes";
 
 function App() {
-  return <InternalRoutes />;
+  return <ExternalRoutes />;
 }
 
 export default App;
