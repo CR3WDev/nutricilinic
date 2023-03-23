@@ -1,4 +1,4 @@
-import Logo from "../../../assets/Logo.svg";
+import Logo from "../../../Assets/Logo.svg";
 import { ListBox } from "primereact/listbox";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

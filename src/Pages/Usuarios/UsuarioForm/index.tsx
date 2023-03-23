@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -7,15 +6,24 @@ import { Message } from "primereact/message";
 import { useDispatch } from "react-redux";
 import { setMode } from "../../../Redux/mode";
 
+interface FormData {
+  nome: string;
+  cpf: string;
+  senha: string;
+};
+
 const UsuarioForm = () => {
   const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormData>();
 
-  const onSubmit = (data: any) => {
+  console.log(errors)
+
+  const onSubmit = (data: FormData) => {
     console.log(data);
   };
 
@@ -54,17 +62,21 @@ const UsuarioForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+
       <div className="p-field mb-3">
         <div>
           <label htmlFor="nome">Nome:</label>
         </div>
+
         <InputText id="nome" {...register("nome", { required: true })} />
         {errors.nome && <Message severity="error" text="Campo obrigatório" />}
       </div>
+
       <div className="p-field mb-3">
         <div>
           <label htmlFor="cpf">CPF:</label>
         </div>
+
         <InputText
           id="cpf"
           {...register("cpf", { required: true, validate: validarCPF })}
@@ -76,13 +88,16 @@ const UsuarioForm = () => {
           <Message severity="error" text="CPF inválido" />
         )}
       </div>
+
       <div className="p-field mt-2">
         <div>
           <label htmlFor="senha">Senha:</label>
         </div>
+
         <Password id="senha" {...register("senha", { required: true })} />
         {errors.senha && <Message severity="error" text="Campo obrigatório" />}
       </div>
+
       <div className="flex justify-content-end">
         <div className="mr-2">
           <Button
@@ -91,8 +106,9 @@ const UsuarioForm = () => {
             onClick={() => dispatch(setMode("search"))}
           />
         </div>
+
         <div>
-          <Button type="submit" label="Enviar" />
+          <Button type="submit" label="Salvar" />
         </div>
       </div>
     </form>

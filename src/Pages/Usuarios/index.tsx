@@ -4,84 +4,15 @@ import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, useMode } from "../../Redux/mode";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import UsuarioForm from "./UsuarioForm";
+import { api } from "../../Services/axios";
 
 export const UsuariosPage = () => {
   const dispatch = useDispatch();
   const mode = useSelector(useMode);
-  const products = [
-    {
-      id: 1,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 2,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 1,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 2,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 1,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 2,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 1,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 2,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 1,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 2,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 1,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 2,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 1,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-    {
-      id: 2,
-      nome: "marcelo victor",
-      cpf: "cpf",
-    },
-  ];
+  const [usuarios, setUsuarios] = useState([]);
+
   const handleEdit = () => {
     dispatch(setMode("edit"));
   };
@@ -109,12 +40,20 @@ export const UsuariosPage = () => {
       </div>
     );
   };
+
+  async function pesquisarUsuarios() {
+    const { data } = await api.get("/usuarios");
+    setUsuarios(data);
+  }
+
   useEffect(() => {
-    console.log(mode);
-  }, [mode]);
+    pesquisarUsuarios();
+  }, []);
+
   useEffect(() => {
     dispatch(setMode("search"));
   }, []);
+
   return (
     <>
       {mode === "edit" || mode === "add" ? <UsuarioForm /> : null}
@@ -138,7 +77,7 @@ export const UsuariosPage = () => {
           />
           <DataTable
             responsiveLayout="scroll"
-            value={products}
+            value={usuarios}
             scrollable
             scrollHeight="400px"
           >

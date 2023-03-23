@@ -1,12 +1,12 @@
 import { Card } from "primereact/card";
 import { Toast, ToastProps } from 'primereact/toast';
-import Logo from "../../assets/Logo.svg";
+import Logo from "../../Assets/Logo.svg";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { InputMask } from "primereact/inputmask";
-import { api } from "../../services/axios";
+import { api } from "../../Services/axios";
 import { useRef } from "react";
 import { ACCESS_TOKEN_KEY } from "../../Utils/sessionStorageKeys";
 
@@ -33,6 +33,8 @@ export const LoginPage = () => {
         login: login.replace(/[^0-9]/g, ""),
         senha
       });
+
+      api.defaults.headers['Authorization'] = `Bearer ${data.token}`;
 
       sessionStorage.setItem(ACCESS_TOKEN_KEY, data.token);
       navigate("/main");
