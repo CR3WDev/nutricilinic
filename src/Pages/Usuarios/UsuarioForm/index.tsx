@@ -10,7 +10,7 @@ interface FormData {
   nome: string;
   cpf: string;
   senha: string;
-};
+}
 
 const UsuarioForm = () => {
   const dispatch = useDispatch();
@@ -20,8 +20,6 @@ const UsuarioForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-
-  console.log(errors)
 
   const onSubmit = (data: FormData) => {
     console.log(data);
@@ -62,7 +60,6 @@ const UsuarioForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-
       <div className="p-field mb-3">
         <div>
           <label htmlFor="nome">Nome:</label>
@@ -94,7 +91,7 @@ const UsuarioForm = () => {
           <label htmlFor="senha">Senha:</label>
         </div>
 
-        <Password id="senha" {...register("senha", { required: true })} />
+        <InputText id="senha" {...register("senha", { required: true })} />
         {errors.senha && <Message severity="error" text="Campo obrigatório" />}
       </div>
 

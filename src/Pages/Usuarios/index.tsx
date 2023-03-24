@@ -22,7 +22,7 @@ export const UsuariosPage = () => {
   const handleDelete = () => {
     dispatch(setMode("delete"));
   };
-  const actionsColumns = (rowSelected: any) => {
+  const actionsColumns = () => {
     return (
       <div style={{ display: "flex", width: "70px" }}>
         <Button
@@ -42,16 +42,13 @@ export const UsuariosPage = () => {
   };
 
   async function pesquisarUsuarios() {
-    const { data } = await api.get("/usuarios");
+    const { data } = await api.get("/pacientes");
     setUsuarios(data);
   }
 
   useEffect(() => {
-    pesquisarUsuarios();
-  }, []);
-
-  useEffect(() => {
     dispatch(setMode("search"));
+    pesquisarUsuarios();
   }, []);
 
   return (
