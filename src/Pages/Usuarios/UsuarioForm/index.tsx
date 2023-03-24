@@ -5,6 +5,10 @@ import { Password } from "primereact/password";
 import { Message } from "primereact/message";
 import { useDispatch } from "react-redux";
 import { setMode } from "../../../Redux/mode";
+import { api } from "../../../Services/axios";
+import { Toast } from "primereact/toast";
+import { useEffect, useRef } from "react";
+import { InputMask } from "primereact/inputmask";
 
 interface FormData {
   nome: string;
@@ -12,17 +16,92 @@ interface FormData {
   senha: string;
 }
 
-const UsuarioForm = () => {
+interface UsuarioFormProps {
+  id?: number;
+  nome?: string;
+  cpf?: string;
+};
+
+const UsuarioForm = ({ id, nome, cpf }: UsuarioFormProps) => {
+
+  console.log(cpf)
+
+  const toast = useRef<any>();
+
   const dispatch = useDispatch();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
+    formState: {
+      errors,
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+    },
+    reset,
+
+  } = useForm<FormData>({
+    defaultValues: {
+      nome,
+      cpf,
+      senha: ""
+    }
+  });
+
+  async function cadastrarUsuario({ cpf, nome, senha }: FormData) {
+    try {
+      await api.post("/usuarios", {
+        cpf: cpf.replace(/[^0-9]/g, ""),
+        nome,
+        senha
+      });
+
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Atenção',
+        detail: "Usuário cadastrado com sucesso"
+      });
+
+      reset();
+
+    } catch (error) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Atenção',
+        detail: "Falha ao cadastrar usuário. Tente novamente em instantes"
+      });
+    }
+  }
+
+  async function alterarUsuario({ nome, senha }: FormData) {
+    try {
+      await api.put(`/usuarios/${id}`, {
+        cpf: cpf?.replace(/[^0-9]/g, ""),
+        nome,
+        senha
+      });
+
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Atenção',
+        detail: "Usuário alterado com sucesso"
+      });
+
+    } catch (error) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Atenção',
+        detail: "Falha ao alterar usuário. Tente novamente em instantes"
+      });
+    }
+  }
+
+  const onSubmit = async (data: FormData) => {
+    if (id) {
+      alterarUsuario(data);
+
+    } else {
+      cadastrarUsuario(data);
+    }
   };
 
   const validarCPF = (value: string) => {
@@ -60,6 +139,7 @@ const UsuarioForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <Toast ref={toast} />
       <div className="p-field mb-3">
         <div>
           <label htmlFor="nome">Nome:</label>
@@ -75,9 +155,13 @@ const UsuarioForm = () => {
         </div>
 
         <InputText
+          className="mb-2 w-12"
           id="cpf"
+          placeholder="CPF"
+          maxLength={11}
           {...register("cpf", { required: true, validate: validarCPF })}
         />
+
         {errors.cpf?.type === "required" && (
           <Message severity="error" text="Campo obrigatório" />
         )}

@@ -9,6 +9,7 @@ import { InputMask } from "primereact/inputmask";
 import { api } from "../../Services/axios";
 import { useRef } from "react";
 import { ACCESS_TOKEN_KEY } from "../../Utils/sessionStorageKeys";
+import { isAxiosError } from "axios";
 
 interface FormLogin {
   login: string;
@@ -39,10 +40,17 @@ export const LoginPage = () => {
       sessionStorage.setItem(ACCESS_TOKEN_KEY, data.token);
       navigate("/main");
     } catch (error) {
+
+      const isAppError = isAxiosError(error);
+      const message = isAppError && error.response?.status === 403 ? "Usuário ou senha inválidos" : "Falha ao realizar login. Tente novamente em instantes"
+
+
+
+
       toast.current?.show({
         severity: 'error',
         summary: 'Atenção',
-        detail: 'Usuário ou senha inválidos'
+        detail: message
       });
     }
   };

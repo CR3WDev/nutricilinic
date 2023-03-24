@@ -4,45 +4,80 @@ import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, useMode } from "../../Redux/mode";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UsuarioForm from "./UsuarioForm";
 import { api } from "../../Services/axios";
+import { Toast } from "primereact/toast";
+
+interface UsuarioProps {
+  id: number;
+  nome: string;
+  cpf: string;
+};
 
 export const UsuariosPage = () => {
+  const toast = useRef<any>();
   const dispatch = useDispatch();
   const mode = useSelector(useMode);
-  const [usuarios, setUsuarios] = useState([]);
+  const [usuarios, setUsuarios] = useState<UsuarioProps[]>([]);
+  const [usuarioAlteracao, setUsuarioAlteracao] = useState<UsuarioProps>();
 
-  const handleEdit = () => {
+  const handleEdit = (usuario: UsuarioProps) => {
     dispatch(setMode("edit"));
+    setUsuarioAlteracao(usuario);
   };
+
   const handleAdd = () => {
     dispatch(setMode("add"));
+    setUsuarioAlteracao(undefined);
   };
-  const handleDelete = () => {
-    dispatch(setMode("delete"));
+
+  const handleDelete = async (idUsuario: number) => {
+
+    const isConfirmed = confirm("Confirmar operação?");
+    if (isConfirmed) {
+      try {
+        await api.delete(`/usuarios/${idUsuario}`);
+
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Atenção',
+          detail: "Usuário exluído com sucesso"
+        });
+
+        pesquisarUsuarios();
+
+      } catch (error) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Atenção',
+          detail: "Falha ao excluir usuário. Tente novamente em instantes"
+        });
+      }
+
+    }
   };
-  const actionsColumns = () => {
+  const actionsColumns = (usuario: UsuarioProps) => {
     return (
       <div style={{ display: "flex", width: "70px" }}>
         <Button
           icon="pi pi-pencil"
           style={{ height: "20px" }}
           className=" p-button-text mr-2"
-          onClick={() => handleEdit()}
+          onClick={() => handleEdit(usuario)}
         />
         <Button
           icon="pi pi-trash"
           className="p-button-text p-button-danger"
           style={{ height: "20px" }}
-          onClick={() => handleDelete()}
+          onClick={() => handleDelete(usuario.id)}
         />
       </div>
     );
   };
 
   async function pesquisarUsuarios() {
-    const { data } = await api.get("/pacientes");
+    const { data } = await api.get("/usuarios");
     setUsuarios(data);
   }
 
@@ -51,9 +86,20 @@ export const UsuariosPage = () => {
     pesquisarUsuarios();
   }, []);
 
+  useEffect(() => {
+    pesquisarUsuarios();
+  }, [mode]);
+
   return (
     <>
-      {mode === "edit" || mode === "add" ? <UsuarioForm /> : null}
+      <Toast ref={toast} />
+      {mode === "edit" || mode === "add" ? (
+        <UsuarioForm
+          id={usuarioAlteracao?.id}
+          cpf={usuarioAlteracao?.cpf}
+          nome={usuarioAlteracao?.nome}
+        />
+      ) : null}
       {mode === "search" || mode === "delete" ? (
         <>
           <h1 className="mb-4">Tabela de Usuários</h1>
@@ -81,7 +127,7 @@ export const UsuariosPage = () => {
             <Column field="id" header="ID"></Column>
             <Column field="nome" header="Nome"></Column>
             <Column field="cpf" header="CPF"></Column>
-            <Column body={actionsColumns} header={"ações"} className="py-2" />
+            <Column body={(data) => actionsColumns(data)} header={"ações"} className="py-2" />
           </DataTable>
         </>
       ) : null}
