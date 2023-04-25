@@ -29,6 +29,7 @@ export const pacientes2 = [
     peso: 70.5,
     dataAgendamento: new Date("2023-04-02"),
     status: "aprovado",
+    cargo: "nutricionista",
   },
   {
     nome: "Maria dos Santos",
@@ -37,6 +38,7 @@ export const pacientes2 = [
     peso: 55.2,
     dataAgendamento: new Date("2023-04-03"),
     status: "recusado",
+    cargo: "nutricionista",
   },
   {
     nome: "Pedro Alves",
@@ -45,6 +47,7 @@ export const pacientes2 = [
     peso: 80.3,
     dataAgendamento: new Date("2023-04-04"),
     status: "",
+    cargo: "nutricionista",
   },
   {
     nome: "Julia Oliveira",
@@ -53,6 +56,7 @@ export const pacientes2 = [
     peso: 62.0,
     dataAgendamento: new Date("2023-04-05"),
     status: "recusado",
+    cargo: "nutricionista",
   },
   {
     nome: "Lucas Ferreira",
@@ -61,6 +65,7 @@ export const pacientes2 = [
     peso: 75.8,
     dataAgendamento: new Date("2023-04-06"),
     status: "recusado",
+    cargo: "nutricionista",
   },
   {
     nome: "Amanda Costa",
@@ -69,6 +74,7 @@ export const pacientes2 = [
     peso: 57.4,
     dataAgendamento: new Date("2023-04-07"),
     status: "aprovado",
+    cargo: "nutricionista",
   },
   {
     nome: "Gabriel Souza",
@@ -77,6 +83,7 @@ export const pacientes2 = [
     peso: 68.9,
     dataAgendamento: new Date("2023-04-08"),
     status: "recusado",
+    cargo: "nutricionista",
   },
   {
     nome: "Bruna Martins",
@@ -85,6 +92,7 @@ export const pacientes2 = [
     peso: 53.6,
     dataAgendamento: new Date("2023-04-09"),
     status: "aprovado",
+    cargo: "nutricionista",
   },
   {
     nome: "Rafael Rodrigues",
@@ -93,6 +101,7 @@ export const pacientes2 = [
     peso: 72.1,
     dataAgendamento: new Date("2023-04-10"),
     status: "recusado",
+    cargo: "nutricionista",
   },
   {
     nome: "Isabela Gonçalves",
@@ -101,6 +110,7 @@ export const pacientes2 = [
     peso: 61.8,
     dataAgendamento: new Date("2023-04-11"),
     status: "aprovado",
+    cargo: "nutricionista",
   },
   {
     nome: "Leonardo Pereira",
@@ -109,6 +119,7 @@ export const pacientes2 = [
     peso: 85.2,
     dataAgendamento: new Date("2023-04-12"),
     status: "recusado",
+    cargo: "nutricionista",
   },
   {
     nome: "Camila Vieira",
@@ -117,5 +128,6 @@ export const pacientes2 = [
     peso: 59.3,
     dataAgendamento: new Date("2023-04-13"),
     status: "aprovado",
+    cargo: "nutricionista",
   },
 ];
