@@ -1,13 +1,18 @@
 import { ListBox } from "primereact/listbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MainInfo } from "./MainInfo";
 import { Avatar } from "primereact/avatar";
-import { pacientes, pacientes2 } from "../../../Utils/mock/pacientes";
+import { pacientes2 } from "../../../Utils/mock/pacientes";
 import { IPaciente } from "../../../Models/pacientes";
 import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 import moment from "moment";
+import { api } from "../../../Services/axios";
+
 export const MainContent = () => {
+
+  const [pacientes, setPacientes] = useState([]);
+
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [solicitacaoAgentamento, setSolicitacoesAgendamento] = useState();
@@ -106,6 +111,17 @@ export const MainContent = () => {
       </div>
     );
   };
+
+  async function buscarPacientes() {
+    const response = await api.get("/nutricionista/pacientes");
+    setPacientes(response.data);
+  }
+
+
+  useEffect(() => {
+    buscarPacientes();
+  }, []);
+
   return (
     <div>
       <div className="flex mt-3 justify-content-around">
@@ -113,26 +129,7 @@ export const MainContent = () => {
           <MainInfo
             icon="pi pi-users"
             text="Total de pacientes"
-            value={16}
-          ></MainInfo>
-          <h3 className="mt-3 mb-2">Solicitação de agendamentos</h3>
-          <ListBox
-            emptyFilterMessage="Nenhum resultado encontrado!"
-            listStyle={{ height: "450px" }}
-            itemTemplate={solicitacaoAgentamentoTemplate}
-            filterPlaceholder="Buscar por solicitações"
-            filter
-            value={solicitacaoAgentamento}
-            onChange={(e) => setSolicitacoesAgendamento(e.value)}
-            options={pacientes2}
-            optionLabel="name"
-          />
-        </div>
-        <div>
-          <MainInfo
-            icon="pi pi-calendar"
-            text="Agendamentos"
-            value={50}
+            value={pacientes.length}
           ></MainInfo>
           <h3 className="mt-3 mb-2">Pacientes</h3>
           <ListBox
@@ -146,6 +143,26 @@ export const MainContent = () => {
             options={pacientes}
             optionLabel="nome"
             className="w-full"
+          />
+
+        </div>
+        <div>
+          <MainInfo
+            icon="pi pi-calendar"
+            text="Agendamentos"
+            value={50}
+          ></MainInfo>
+          <h3 className="mt-3 mb-2">Solicitação de agendamentos</h3>
+          <ListBox
+            emptyFilterMessage="Nenhum resultado encontrado!"
+            listStyle={{ height: "450px" }}
+            itemTemplate={solicitacaoAgentamentoTemplate}
+            filterPlaceholder="Buscar por solicitações"
+            filter
+            value={solicitacaoAgentamento}
+            onChange={(e) => setSolicitacoesAgendamento(e.value)}
+            options={pacientes2}
+            optionLabel="name"
           />
         </div>
         <div>
