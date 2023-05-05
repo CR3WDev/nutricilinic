@@ -67,6 +67,8 @@ export const PacientesView = ({ rowSelected }: any) => {
 					value={historico}
 					scrollable
 					scrollHeight="400px"
+					emptyMessage="Paciente não possui histórico"
+
 				>
 					<Column field="dataExtenso" header="Data"></Column>
 					<Column field="descricaoOcorrencia" header="Registro"></Column>

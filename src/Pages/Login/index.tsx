@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { InputMask } from "primereact/inputmask";
 import { api } from "../../Services/axios";
 import { useRef } from "react";
-import { ACCESS_TOKEN_KEY } from "../../Utils/sessionStorageKeys";
+import { ACCESS_TOKEN_KEY, NOME_USUARIO_KEY, PERFIL_USUARIO_KEY } from "../../Utils/sessionStorageKeys";
 import { isAxiosError } from "axios";
 
 interface FormLogin {
@@ -38,14 +38,14 @@ export const LoginPage = () => {
       api.defaults.headers['Authorization'] = `Bearer ${data.token}`;
 
       sessionStorage.setItem(ACCESS_TOKEN_KEY, data.token);
+      sessionStorage.setItem(NOME_USUARIO_KEY, data.nomeUsuario);
+      sessionStorage.setItem(PERFIL_USUARIO_KEY, data.perfilUsuario);
+
       navigate("/main");
     } catch (error) {
 
       const isAppError = isAxiosError(error);
-      const message = isAppError && error.response?.status === 403 ? "Usuário ou senha inválidos" : "Falha ao realizar login. Tente novamente em instantes"
-
-
-
+      const message = isAppError && error.response?.status === 401 ? "Usuário ou senha inválidos" : "Falha ao realizar login. Tente novamente em instantes"
 
       toast.current?.show({
         severity: 'error',

@@ -2,11 +2,16 @@ import { InputText } from "primereact/inputtext";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
+import { NOME_USUARIO_KEY, PERFIL_USUARIO_KEY } from "../../../Utils/sessionStorageKeys";
 
 export const Topbar = () => {
+
+  const [nomeUsuario, setNomeUsuario] = useState("");
+  const [perfilUsuario, setPerfilUsuario] = useState("");
+
   const menu = useRef<Menu>(null);
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -18,12 +23,12 @@ export const Topbar = () => {
     {
       label: "Ajuda",
       icon: "pi pi-refresh",
-      command: () => {},
+      command: () => { },
     },
     {
       label: "Notificações",
       icon: "pi pi-bell",
-      command: () => {},
+      command: () => { },
     },
     { separator: true },
     {
@@ -34,6 +39,16 @@ export const Topbar = () => {
       },
     },
   ];
+
+
+
+  useEffect(() => {
+    const nomeUsuario = sessionStorage.getItem(NOME_USUARIO_KEY) ?? "";
+    setNomeUsuario(nomeUsuario);
+
+    const perfilUsuario = sessionStorage.getItem(PERFIL_USUARIO_KEY) ?? "";
+    setPerfilUsuario(perfilUsuario);
+  }, []);
 
   return (
     <div className="flex mx-4 my-3 " style={{ width: "calc(100vw - 278px)" }}>
@@ -60,9 +75,9 @@ export const Topbar = () => {
           />
           <div className="flex text-center">
             <div style={{ width: "130px" }}>
-              <span className="font-semibold">Marcelo Victor</span>
+              <span className="font-semibold">{nomeUsuario}</span>
               <br />
-              <span>Nutricionista</span>
+              <span>{perfilUsuario}</span>
             </div>
             <div className="flex align-items-center">
               <Menu model={items} popup ref={menu} />
