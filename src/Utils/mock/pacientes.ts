@@ -133,9 +133,9 @@ export const pacientes2 = [
 ];
 
 export const pacientes3 = [
-	{ nome: 'Marcelo Victor', sexo: 'Masculino', idade: 81, pontuario: '2010' },
-	{ nome: 'Bruno Lopes', sexo: 'Feminino', idade: 25, pontuario: '1837' },
-	{ nome: 'Junior Victor', sexo: 'Masculino', idade: 39, pontuario: '9272' },
-	{ nome: 'Gustavo Victor', sexo: 'Feminino', idade: 55, pontuario: '6172' },
-	{ nome: 'Arthur Victor', sexo: 'Masculino', idade: 56, pontuario: '0173' },
+	{ nome: 'Marcelo Victor', sexo: 'Masculino', idade: 81, prontuario: '2010' },
+	{ nome: 'Bruno Lopes', sexo: 'Feminino', idade: 25, prontuario: '1837' },
+	{ nome: 'Junior Victor', sexo: 'Masculino', idade: 39, prontuario: '9272' },
+	{ nome: 'Gustavo Victor', sexo: 'Feminino', idade: 55, prontuario: '6172' },
+	{ nome: 'Arthur Victor', sexo: 'Masculino', idade: 56, prontuario: '0173' },
 ];

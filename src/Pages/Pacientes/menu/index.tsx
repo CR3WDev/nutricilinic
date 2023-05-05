@@ -8,16 +8,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMode, useMode } from '../../../Redux/mode';
 import { pacientes3 } from '../../../Utils/mock/pacientes';
 import { PacientesView } from '../view';
+import { api } from '../../../Services/axios';
 
 export const PacientesMenu = () => {
+
 	const mode = useSelector(useMode);
 	const dispatch = useDispatch();
 	const [rowSelected, setRowSelected] = useState();
+	const [pacientes, setPacientes] = useState([]);
+
+	async function carregarPacientes() {
+		const response = await api.get("/nutricionista/pacientes");
+		setPacientes(response.data);
+	}
+
 	useEffect(() => {
-		console.log(mode);
+		carregarPacientes();
 	}, []);
-	const itemTemplate = (obj: any) => {
-		console.log(obj);
+
+	const itemTemplate = (paciente: any) => {
+
 		return (
 			<div className="flex w-full">
 				<div className="h-full flex align-items-center mx-2">
@@ -32,14 +42,14 @@ export const PacientesMenu = () => {
 					/>
 					<div className="my-3">
 						<div>
-							<span className="font-bold">{obj.nome}</span>
+							<span className="font-bold">{paciente.nome}</span>
 						</div>
 						<div>
-							<span>{obj.idade}</span> anos
-							<span> {obj.sexo}</span>
+							<span>{paciente.idade}</span> anos
+							<span> {paciente.sexo}</span>
 						</div>
 						<div>
-							Pontuário:<span> {obj.pontuario}</span>
+							Prontuário:<span> {paciente.id}</span>
 						</div>
 					</div>
 				</div>
@@ -47,7 +57,7 @@ export const PacientesMenu = () => {
 					<Button
 						onClick={() => {
 							dispatch(setMode('info'));
-							setRowSelected(obj);
+							setRowSelected(paciente);
 						}}
 						text
 						icon="pi pi-search"
@@ -93,7 +103,7 @@ export const PacientesMenu = () => {
 					/>
 				</div>
 				<Card className="flex justify-content-center mt-3 w-full">
-					<DataView value={pacientes3} itemTemplate={itemTemplate} />
+					<DataView value={pacientes} itemTemplate={itemTemplate} />
 				</Card>
 			</div>
 		);

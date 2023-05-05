@@ -7,8 +7,13 @@ import { Divider } from 'primereact/divider';
 import { useDispatch } from 'react-redux';
 import { setMode } from '../../../Redux/mode';
 import { registros } from '../../../Utils/mock/registros';
+import { useEffect, useState } from 'react';
+import { api } from '../../../Services/axios';
 
 export const PacientesView = ({ rowSelected }: any) => {
+
+	const [historico, setHistorico] = useState([]);
+
 	const dispatch = useDispatch();
 	const actionsColumns = (usuario: any) => {
 		return (
@@ -22,6 +27,16 @@ export const PacientesView = ({ rowSelected }: any) => {
 			</div>
 		);
 	};
+
+	async function buscarHistorico() {
+		const response = await api.get(`/nutricionista/pacientes/${rowSelected.id}/historico`);
+		setHistorico(response.data);
+	}
+
+	useEffect(() => {
+		buscarHistorico();
+	}, []);
+
 	return (
 		<section>
 			<h1>Histórico do paciente</h1>
@@ -49,13 +64,13 @@ export const PacientesView = ({ rowSelected }: any) => {
 				<Divider />
 				<DataTable
 					responsiveLayout="scroll"
-					value={registros}
+					value={historico}
 					scrollable
 					scrollHeight="400px"
 				>
-					<Column field="registro" header="Registro"></Column>
-					<Column field="data" header="Data"></Column>
-					<Column field="doutor" header="Doutor(a)"></Column>
+					<Column field="dataExtenso" header="Data"></Column>
+					<Column field="descricaoOcorrencia" header="Registro"></Column>
+					<Column field="usuarioOcorrencia" header="Doutor(a)"></Column>
 					<Column
 						body={(data) => actionsColumns(data)}
 						header={'ações'}
