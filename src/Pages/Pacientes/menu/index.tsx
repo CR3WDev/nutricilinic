@@ -5,20 +5,20 @@ import { Checkbox } from 'primereact/checkbox';
 import { DataView } from 'primereact/dataview';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { setMode, useMode } from '../../../Redux/mode';
-import { pacientes3 } from '../../../Utils/mock/pacientes';
-import { PacientesView } from '../view';
 import { api } from '../../../Services/axios';
+import { PacientesView } from '../view';
 
 export const PacientesMenu = () => {
-
 	const mode = useSelector(useMode);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [rowSelected, setRowSelected] = useState();
 	const [pacientes, setPacientes] = useState([]);
 
 	async function carregarPacientes() {
-		const response = await api.get("/nutricionista/pacientes");
+		const response = await api.get('/nutricionista/pacientes');
 		setPacientes(response.data);
 	}
 
@@ -27,7 +27,6 @@ export const PacientesMenu = () => {
 	}, []);
 
 	const itemTemplate = (paciente: any) => {
-
 		return (
 			<div className="flex w-full">
 				<div className="h-full flex align-items-center mx-2">
@@ -93,11 +92,17 @@ export const PacientesMenu = () => {
 						icon="pi pi-plus-circle"
 						label="Iniciar atendimento nutrólogo"
 						severity="secondary"
+						onClick={() => {
+							navigate('/atendimento-nutrologo');
+						}}
 						text
 					/>
 					<Button
 						icon="pi pi-plus-circle"
 						label="Iniciar atendimento nutricionista"
+						onClick={() => {
+							navigate('/atendimento-nutricionista');
+						}}
 						severity="secondary"
 						text
 					/>
