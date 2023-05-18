@@ -43,7 +43,7 @@ export const AtendimentoNutrologo = () => {
 	};
 	return (
 		<div>
-			<h1 className="mb-4">Informações gerais do paciente</h1>
+			<h1 className="mb-4">Atendimento Nutrólogo</h1>
 			<Card>
 				<Steps
 					model={items}
