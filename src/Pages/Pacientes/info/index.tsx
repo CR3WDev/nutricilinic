@@ -4,14 +4,12 @@ import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Divider } from 'primereact/divider';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setMode } from '../../../Redux/mode';
-import { registros } from '../../../Utils/mock/registros';
-import { useEffect, useState } from 'react';
 import { api } from '../../../Services/axios';
 
-export const PacientesView = ({ rowSelected }: any) => {
-
+export const PacientesInfo = ({ rowSelected }: any) => {
 	const [historico, setHistorico] = useState([]);
 
 	const dispatch = useDispatch();
@@ -29,7 +27,9 @@ export const PacientesView = ({ rowSelected }: any) => {
 	};
 
 	async function buscarHistorico() {
-		const response = await api.get(`/nutricionista/pacientes/${rowSelected.id}/historico`);
+		const response = await api.get(
+			`/nutricionista/pacientes/${rowSelected.id}/historico`
+		);
 		setHistorico(response.data);
 	}
 
@@ -68,7 +68,6 @@ export const PacientesView = ({ rowSelected }: any) => {
 					scrollable
 					scrollHeight="400px"
 					emptyMessage="Paciente não possui histórico"
-
 				>
 					<Column field="dataExtenso" header="Data"></Column>
 					<Column field="descricaoOcorrencia" header="Registro"></Column>

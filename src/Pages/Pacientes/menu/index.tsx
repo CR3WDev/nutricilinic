@@ -1,14 +1,15 @@
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
-import { Checkbox } from 'primereact/checkbox';
 import { DataView } from 'primereact/dataview';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setMode, useMode } from '../../../Redux/mode';
 import { api } from '../../../Services/axios';
-import { PacientesView } from '../view';
+import { pacientes3 } from '../../../Utils/mock/pacientes';
+import { PlanoAlimentar } from '../PlanoAlimentar';
+import { PacientesInfo } from '../info';
 
 export const PacientesMenu = () => {
 	const mode = useSelector(useMode);
@@ -29,9 +30,6 @@ export const PacientesMenu = () => {
 	const itemTemplate = (paciente: any) => {
 		return (
 			<div className="flex w-full">
-				<div className="h-full flex align-items-center mx-2">
-					<Checkbox checked={true}></Checkbox>
-				</div>
 				<div className="h-full flex align-items-center w-full">
 					<Avatar
 						className="mr-2"
@@ -55,6 +53,15 @@ export const PacientesMenu = () => {
 				<div className="flex align-items-center">
 					<Button
 						onClick={() => {
+							dispatch(setMode('view'));
+							setRowSelected(paciente);
+						}}
+						text
+						severity="warning"
+						icon="pi pi-calendar"
+					></Button>
+					<Button
+						onClick={() => {
 							dispatch(setMode('info'));
 							setRowSelected(paciente);
 						}}
@@ -73,12 +80,6 @@ export const PacientesMenu = () => {
 					<Button
 						icon="pi pi-sliders-v"
 						label="Filtros"
-						severity="secondary"
-						text
-					/>
-					<Button
-						icon="pi pi-chart-line"
-						label="Plano alimentar"
 						severity="secondary"
 						text
 					/>
@@ -108,19 +109,24 @@ export const PacientesMenu = () => {
 					/>
 				</div>
 				<Card className="flex justify-content-center mt-3 w-full">
-					<DataView value={pacientes} itemTemplate={itemTemplate} />
+					<DataView value={pacientes3} itemTemplate={itemTemplate} />
 				</Card>
 			</div>
 		);
 	};
 	const showView = () => {
-		if (mode !== 'info') return;
-		return <PacientesView rowSelected={rowSelected} />;
+		if (mode !== 'info') return <></>;
+		return <PacientesInfo rowSelected={rowSelected} />;
+	};
+	const showPlanoAlimentar = () => {
+		if (mode !== 'view') return <></>;
+		return <PlanoAlimentar rowSelected={rowSelected} />;
 	};
 	return (
 		<>
 			{showMenu()}
 			{showView()}
+			{showPlanoAlimentar()}
 		</>
 	);
 };
