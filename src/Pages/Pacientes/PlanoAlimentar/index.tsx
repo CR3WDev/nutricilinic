@@ -5,10 +5,11 @@ import { Card } from 'primereact/card';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { ToggleButton } from 'primereact/togglebutton';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setMode } from '../../../Redux/mode';
 import { refeicoes } from '../../../Utils/mock/refeicoes';
 
 export const PlanoAlimentar = ({ rowSelected }: any) => {
-	console.log({ rowSelected });
 	const diasDaSemana = [
 		'Segunda',
 		'Terça',
@@ -18,6 +19,7 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 		'Sábado',
 		'Domingo',
 	];
+	const dispatch = useDispatch();
 	const [diasSelecionados, setDiasSelecionados] = useState<Array<string>>([]);
 	const [descricao, setDescricao] = useState<string>('');
 	const selecionarDia = (dia: string) => {
@@ -60,9 +62,9 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 					<h3>Dias da semana:</h3>
 				</div>
 				<div className="flex justify-content-between mt-3">
-					{diasDaSemana.map((diaDaSemana) => {
+					{diasDaSemana.map((diaDaSemana, index) => {
 						return (
-							<div>
+							<div key={index}>
 								<ToggleButton
 									offLabel={diaDaSemana}
 									onLabel={diaDaSemana}
@@ -102,9 +104,10 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 				</div>
 				<div className="mt-3">
 					<Accordion activeIndex={0}>
-						{refeicoes.map((refeicao) => {
+						{refeicoes.map((refeicao, index) => {
 							return (
 								<AccordionTab
+									key={index}
 									header={
 										<div className="flex justify-conten-between">
 											<div className="flex align-items-center">
@@ -139,8 +142,8 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 										</div>
 									}
 								>
-									{refeicao.alimentos.map((alimento) => {
-										return <p> - {alimento.nome}</p>;
+									{refeicao.alimentos.map((alimento, index) => {
+										return <p key={index}> - {alimento.nome}</p>;
 									})}
 								</AccordionTab>
 							);
@@ -148,6 +151,15 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 					</Accordion>
 				</div>
 			</Card>
+			<div className="my-3">
+				<Button
+					onClick={() => {
+						dispatch(setMode('search'));
+					}}
+				>
+					Voltar
+				</Button>
+			</div>
 		</div>
 	);
 };
