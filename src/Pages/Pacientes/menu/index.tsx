@@ -96,15 +96,6 @@ export const PacientesMenu = () => {
 					/>
 					<Button
 						icon="pi pi-plus-circle"
-						label="Iniciar atendimento nutrólogo"
-						severity="secondary"
-						onClick={() => {
-							navigate('/atendimento-nutrologo');
-						}}
-						text
-					/>
-					<Button
-						icon="pi pi-plus-circle"
 						label="Iniciar atendimento nutricionista"
 						onClick={() => {
 							navigate('/atendimento-nutricionista');
