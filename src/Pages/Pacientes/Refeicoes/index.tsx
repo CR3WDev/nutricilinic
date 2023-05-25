@@ -26,7 +26,6 @@ export const Refeicoes = ({ visible, onHide }: any) => {
 	};
 	return (
 		<Dialog visible={visible} onHide={onHide} header="Refeições">
-			<div></div>
 			<DataTable
 				responsiveLayout="scroll"
 				scrollable

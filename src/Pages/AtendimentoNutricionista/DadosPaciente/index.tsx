@@ -97,26 +97,6 @@ export const DadosPaciente = ({
 							/>
 							{getFormErrorMessage(errors.dataDeNascimento)}
 						</div>
-						<div className="col-5 m-0 p-0 flex flex-column">
-							<label className="font-bold" htmlFor="idade">
-								Idade
-							</label>
-							<InputText
-								placeholder="Idade"
-								id="idade"
-								keyfilter={/^[0-9]*$/}
-								className={classNames(
-									{
-										'p-invalid': errors.idade,
-									},
-									'mt-2'
-								)}
-								{...register('idade', {
-									required: true,
-								})}
-							/>
-							{getFormErrorMessage(errors.idade)}
-						</div>
 					</div>
 				</div>
 				<div className="col-12">
