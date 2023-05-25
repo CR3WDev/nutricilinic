@@ -5,6 +5,15 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../../../Services/axios';
+
+interface FormData {
+	nome: string;
+	dataNascimento: string;
+	sexo: string;
+	profissao: string;
+	anamnese: string;
+}
 
 export const DadosPaciente = ({
 	setActiveIndex,
@@ -17,43 +26,26 @@ export const DadosPaciente = ({
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm();
+	} = useForm<FormData>();
 
 	const getFormErrorMessage = (errors: any) => {
 		if (errors?.type === 'required') {
 			return <span className="p-error">Campo Obrigatório</span>;
 		}
 	};
-	const onSubmit = (data: any) => {
+	const onSubmit = async (data: FormData) => {
 		if (activeIndex > 2) return;
 		if (activeIndex === 2) return navigate('/pacientes');
-		setActiveIndex((prev: any) => prev + 1);
 		setFormData(data);
+
+		await api.post("/atendimentos/paciente", data);
+		setActiveIndex((prev: any) => prev + 1);
 	};
 	return (
 		<div>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="flex">
-					<div className="col-6 flex flex-column">
-						<label className="font-bold" htmlFor="nomeCompleto">
-							Nome Completo
-						</label>
-						<InputText
-							placeholder="Nome Completo"
-							id="nomeCompleto"
-							className={classNames(
-								{
-									'p-invalid': errors.nomeCompleto,
-								},
-								'mt-2'
-							)}
-							aria-describedby="nomeCompleto-help"
-							{...register('nomeCompleto', {
-								required: true,
-							})}
-						/>
-						{getFormErrorMessage(errors.nomeCompleto)}
-					</div>
+
 					<div className="col-6 flex flex-column">
 						<label className="font-bold" htmlFor="profissao">
 							Profissão
@@ -83,11 +75,11 @@ export const DadosPaciente = ({
 							<InputMask
 								className={classNames(
 									{
-										'p-invalid': errors.dataDeNascimento,
+										'p-invalid': errors.dataNascimento,
 									},
 									'mt-2'
 								)}
-								{...register('dataDeNascimento', {
+								{...register('dataNascimento', {
 									required: true,
 								})}
 								placeholder="Data de Nascimento"
@@ -95,27 +87,7 @@ export const DadosPaciente = ({
 								mask="99/99/9999"
 								keyfilter={/^[0-9]*$/}
 							/>
-							{getFormErrorMessage(errors.dataDeNascimento)}
-						</div>
-						<div className="col-5 m-0 p-0 flex flex-column">
-							<label className="font-bold" htmlFor="idade">
-								Idade
-							</label>
-							<InputText
-								placeholder="Idade"
-								id="idade"
-								keyfilter={/^[0-9]*$/}
-								className={classNames(
-									{
-										'p-invalid': errors.idade,
-									},
-									'mt-2'
-								)}
-								{...register('idade', {
-									required: true,
-								})}
-							/>
-							{getFormErrorMessage(errors.idade)}
+							{getFormErrorMessage(errors.dataNascimento)}
 						</div>
 					</div>
 				</div>
