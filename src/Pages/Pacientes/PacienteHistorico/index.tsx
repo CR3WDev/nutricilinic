@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { setMode } from '../../../Redux/mode';
 import { api } from '../../../Services/axios';
 
-export const PacientesInfo = ({ rowSelected }: any) => {
+export const PacientesHistorico = ({ rowSelected }: any) => {
 	const [historico, setHistorico] = useState([]);
 
 	const dispatch = useDispatch();

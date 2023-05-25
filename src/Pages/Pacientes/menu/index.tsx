@@ -8,8 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { setMode, useMode } from '../../../Redux/mode';
 import { api } from '../../../Services/axios';
 import { pacientes3 } from '../../../Utils/mock/pacientes';
+import { PacientesHistorico } from '../PacienteHistorico';
+import { PacientesInformacoes } from '../PacienteInformacoes';
 import { PlanoAlimentar } from '../PlanoAlimentar';
-import { PacientesInfo } from '../info';
 
 export const PacientesMenu = () => {
 	const mode = useSelector(useMode);
@@ -30,7 +31,12 @@ export const PacientesMenu = () => {
 	const itemTemplate = (paciente: any) => {
 		return (
 			<div className="flex w-full">
-				<div className="h-full flex align-items-center w-full">
+				<div
+					className="h-full flex align-items-center w-full cursor-pointer"
+					onClick={() => {
+						dispatch(setMode('pacienteInformacoes'));
+					}}
+				>
 					<Avatar
 						className="mr-2"
 						icon="pi pi-user"
@@ -53,7 +59,7 @@ export const PacientesMenu = () => {
 				<div className="flex align-items-center">
 					<Button
 						onClick={() => {
-							dispatch(setMode('view'));
+							dispatch(setMode('planoAlimentar'));
 							setRowSelected(paciente);
 						}}
 						text
@@ -62,7 +68,7 @@ export const PacientesMenu = () => {
 					></Button>
 					<Button
 						onClick={() => {
-							dispatch(setMode('info'));
+							dispatch(setMode('historico'));
 							setRowSelected(paciente);
 						}}
 						text
@@ -114,19 +120,24 @@ export const PacientesMenu = () => {
 			</div>
 		);
 	};
-	const showView = () => {
-		if (mode !== 'info') return <></>;
-		return <PacientesInfo rowSelected={rowSelected} />;
+	const showHistorico = () => {
+		if (mode !== 'historico') return <></>;
+		return <PacientesHistorico rowSelected={rowSelected} />;
 	};
 	const showPlanoAlimentar = () => {
-		if (mode !== 'view') return <></>;
+		if (mode !== 'planoAlimentar') return <></>;
 		return <PlanoAlimentar rowSelected={rowSelected} />;
+	};
+	const showInformacoes = () => {
+		if (mode !== 'pacienteInformacoes') return <></>;
+		return <PacientesInformacoes />;
 	};
 	return (
 		<>
 			{showMenu()}
-			{showView()}
+			{showHistorico()}
 			{showPlanoAlimentar()}
+			{showInformacoes()}
 		</>
 	);
 };

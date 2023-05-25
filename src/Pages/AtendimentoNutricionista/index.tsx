@@ -6,7 +6,7 @@ import { AvaliacaoFisica } from './AvaliacaoFisica';
 import { ResultadosNutricionista } from './ResultadosNutricionista';
 
 export const AtendimentoNutricionista = () => {
-	const [activeIndex, setActiveIndex] = useState(1);
+	const [activeIndex, setActiveIndex] = useState(0);
 	const [formData, setFormData] = useState();
 	const items = [
 		{
