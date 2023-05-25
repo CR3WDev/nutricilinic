@@ -9,8 +9,15 @@ export const Refeicoes = ({ visible, onHide }: any) => {
 		return (
 			<div style={{ display: 'flex', width: '70px' }}>
 				<Button
-					icon="pi pi-search"
+					icon="pi pi-pencil"
 					style={{ height: '20px' }}
+					className=" p-button-text mr-2"
+					onClick={() => console.log('oi')}
+				/>
+				<Button
+					icon="pi pi-trash"
+					style={{ height: '20px' }}
+					severity="danger"
 					className=" p-button-text mr-2"
 					onClick={() => console.log('oi')}
 				/>
