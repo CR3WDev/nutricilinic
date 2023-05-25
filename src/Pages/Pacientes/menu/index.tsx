@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setMode, useMode } from '../../../Redux/mode';
 import { api } from '../../../Services/axios';
-import { pacientes3 } from '../../../Utils/mock/pacientes';
 import { PacientesHistorico } from '../PacienteHistorico';
 import { PacientesInformacoes } from '../PacienteInformacoes';
 import { PlanoAlimentar } from '../PlanoAlimentar';
@@ -115,7 +114,7 @@ export const PacientesMenu = () => {
 					/>
 				</div>
 				<Card className="flex justify-content-center mt-3 w-full">
-					<DataView value={pacientes3} itemTemplate={itemTemplate} />
+					<DataView value={pacientes} itemTemplate={itemTemplate} />
 				</Card>
 			</div>
 		);

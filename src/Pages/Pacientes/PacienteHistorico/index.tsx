@@ -25,7 +25,9 @@ export const PacientesHistorico = ({ rowSelected }: any) => {
 			</div>
 		);
 	};
-
+	useEffect(() => {
+		console.log(rowSelected);
+	}, []);
 	async function buscarHistorico() {
 		const response = await api.get(
 			`/nutricionista/pacientes/${rowSelected.id}/historico`
