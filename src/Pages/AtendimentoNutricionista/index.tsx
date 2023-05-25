@@ -1,8 +1,8 @@
 import { Card } from 'primereact/card';
 import { Steps } from 'primereact/steps';
 import { useEffect, useState } from 'react';
-import { DadosPaciente } from '../AtendimentoNutrologo/DadosPaciente';
 import { AvaliacaoFisica } from './AvaliacaoFisica';
+import { DadosPaciente } from './DadosPaciente/index';
 import { ResultadosNutricionista } from './ResultadosNutricionista';
 
 export const AtendimentoNutricionista = () => {
