@@ -6,6 +6,9 @@ import { DadosPaciente } from './DadosPaciente/index';
 import { ResultadosNutricionista } from './ResultadosNutricionista';
 
 export const AtendimentoNutricionista = () => {
+	const [idAtendimento, setIdAtendimento] = useState();
+	const [resultadoAvalicao, setResultadoAvalicao] = useState([]);
+
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [formData, setFormData] = useState();
 	const items = [
@@ -22,6 +25,7 @@ export const AtendimentoNutricionista = () => {
 	useEffect(() => {
 		console.log(formData);
 	}, [formData]);
+
 	const StepContent = () => {
 		if (activeIndex === 0)
 			return (
@@ -29,6 +33,7 @@ export const AtendimentoNutricionista = () => {
 					setActiveIndex={setActiveIndex}
 					activeIndex={activeIndex}
 					setFormData={setFormData}
+					setIdAtendimento={setIdAtendimento}
 				/>
 			);
 		if (activeIndex === 1)
@@ -36,10 +41,12 @@ export const AtendimentoNutricionista = () => {
 				<AvaliacaoFisica
 					setActiveIndex={setActiveIndex}
 					setFormData={setFormData}
+					idAtendimento={idAtendimento}
+					setResultadoAvalicao={setResultadoAvalicao}
 				/>
 			);
 		if (activeIndex === 2)
-			return <ResultadosNutricionista setActiveIndex={setActiveIndex} />;
+			return <ResultadosNutricionista setActiveIndex={setActiveIndex} resultadoAvaliacao={resultadoAvalicao} />;
 	};
 	return (
 		<div>

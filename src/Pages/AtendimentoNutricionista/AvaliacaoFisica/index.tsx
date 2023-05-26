@@ -1,32 +1,65 @@
 import { Button } from 'primereact/button';
 import { Fieldset } from 'primereact/fieldset';
 import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
 import { RadioButton } from 'primereact/radiobutton';
 import { classNames } from 'primereact/utils';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { api } from '../../../Services/axios';
 
-export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
+interface FormData {
+	altura: number;
+	peso: number;
+	bracoEsquerdoRelaxado: number;
+	bracoDireitoRelaxado: number;
+	bracoEsquerdoContraido: number;
+	bracoDireitoContraido: number;
+	antebracoDireito: number;
+	antebracoEsquerdo: number;
+	punhoDireito: number;
+	punhoEsquerdo: number;
+	tipoComposicaoCorporal: string;
+	protocolo: string;
+	biceps: number;
+	abdominal: number;
+	triceps: number;
+	suprailiaca: number;
+	axilarMedia: number;
+	subscapular: number;
+	torax: number;
+	coxa: number;
+	panturrilhaMedial: number;
+}
+
+export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAvalicao }: any) => {
 	const {
 		formState: { errors },
 		register,
 		control,
 		setValue,
 		handleSubmit,
-	} = useForm();
+	} = useForm<FormData>();
 
 	const getFormErrorMessage = (errors: any) => {
 		if (errors?.type === 'required') {
 			return <span className="p-error">Campo Obrigatório</span>;
 		}
 	};
-	const onSubmit = (data: any) => {
-		setFormData(data);
-		setActiveIndex((prev: number) => prev + 1);
+	const onSubmit = async (data: FormData) => {
+		const response = await api.post(`/atendimentos/${idAtendimento}/avaliacao-fisica`, data);
+		setActiveIndex((prev: any) => prev + 1);
+		setResultadoAvalicao(response.data.resultados);
 	};
+
+
 	useEffect(() => {
-		setValue('tipo', 'pregasCutaneas');
+		setValue('tipoComposicaoCorporal', 'PREGAS_CUTANEAS');
 	}, []);
+
+
+	console.log(idAtendimento);
+
 	return (
 		<div>
 			<form action="" onSubmit={handleSubmit(onSubmit)}>
@@ -36,16 +69,25 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="altura">
 								Altura
 							</label>
-							<InputText
-								placeholder="Altura"
-								id="altura"
-								className={classNames(
-									{
-										'p-invalid': errors.altura,
-									},
-									'mt-2'
+							<Controller
+								name="altura"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Altura"
+										id="altura"
+										className={classNames(
+											{
+												'p-invalid': errors.altura,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('altura', {})}
 							/>
 							{getFormErrorMessage(errors.altura)}
 						</div>
@@ -53,16 +95,25 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="peso">
 								Peso
 							</label>
-							<InputText
-								placeholder="Peso"
-								id="peso"
-								className={classNames(
-									{
-										'p-invalid': errors.peso,
-									},
-									'mt-2'
+							<Controller
+								name="peso"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Peso"
+										id="peso"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('peso', {})}
 							/>
 							{getFormErrorMessage(errors.peso)}
 						</div>
@@ -74,33 +125,54 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="bracoEsquerdoRelaxado">
 								Braço Esquerdo Relaxado
 							</label>
-							<InputText
-								placeholder="Braço Esquerdo Relaxado"
-								id="bracoEsquerdoRelaxado"
-								className={classNames(
-									{
-										'p-invalid': errors.bracoEsquerdoRelaxado,
-									},
-									'mt-2'
+
+							<Controller
+								name="bracoEsquerdoRelaxado"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Braço Esquerdo Relaxado"
+										id="bracoEsquerdoRelaxado"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('bracoEsquerdoRelaxado', {})}
 							/>
 							{getFormErrorMessage(errors.bracoEsquerdoRelaxado)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="bracoDireitoRelaxado">
 								Braço Direito Relaxado
 							</label>
-							<InputText
-								placeholder="Braço Direito Relaxado"
-								id="bracoDireitoRelaxado"
-								className={classNames(
-									{
-										'p-invalid': errors.bracoDireitoRelaxado,
-									},
-									'mt-2'
+
+							<Controller
+								name="bracoDireitoRelaxado"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Braço Direito Relaxado"
+										id="bracoDireitoRelaxado"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('bracoDireitoRelaxado', {})}
 							/>
 							{getFormErrorMessage(errors.bracoDireitoRelaxado)}
 						</div>
@@ -108,16 +180,25 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="bracoEsquerdoContraido">
 								Braço Esquerdo Contraído
 							</label>
-							<InputText
-								placeholder="Braço Esquerdo Contraído"
-								id="bracoEsquerdoContraido"
-								className={classNames(
-									{
-										'p-invalid': errors.bracoEsquerdoContraido,
-									},
-									'mt-2'
+							<Controller
+								name="bracoEsquerdoContraido"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Braço Esquerdo contraído"
+										id="bracoEsquerdoContraido"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('bracoEsquerdoContraido', {})}
 							/>
 							{getFormErrorMessage(errors.bracoEsquerdoContraido)}
 						</div>
@@ -127,50 +208,82 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="bracoDireitoContraido">
 								Braço Direto Contraído
 							</label>
-							<InputText
-								placeholder="Braço Direto Contraído"
-								id="bracoDireitoContraido"
-								className={classNames(
-									{
-										'p-invalid': errors.bracoDireitoContraido,
-									},
-									'mt-2'
+
+							<Controller
+								name="bracoDireitoContraido"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Braço Direito contraído"
+										id="bracoEsquerdoContraido"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('bracoDireitoContraido', {})}
 							/>
 							{getFormErrorMessage(errors.bracoDireitoContraido)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="antebracoEsquerdo">
 								Antebraço Esquerdo
 							</label>
-							<InputText
-								placeholder="Antebraço Esquerdo"
-								id="antebracoEsquerdo"
-								className={classNames(
-									{
-										'p-invalid': errors.antebracoEsquerdo,
-									},
-									'mt-2'
+
+							<Controller
+								name="antebracoEsquerdo"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Antebraço esquerdo"
+										id="antebracoEsquerdo"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('antebracoEsquerdo', {})}
 							/>
 							{getFormErrorMessage(errors.antebracoEsquerdo)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="antebracoDireito">
 								Antebraco Direito
 							</label>
-							<InputText
-								placeholder="Antebraco Direito"
-								id="bracoEsquerdoContraido"
-								className={classNames(
-									{
-										'p-invalid': errors.antebracoDireito,
-									},
-									'mt-2'
+
+							<Controller
+								name="antebracoDireito"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Antebraço direito"
+										id="antebracoDireito"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('antebracoDireito', {})}
 							/>
 							{getFormErrorMessage(errors.antebracoDireito)}
 						</div>
@@ -180,33 +293,54 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="punhoEsquerdo">
 								Punho Esquerdo
 							</label>
-							<InputText
-								placeholder="Punho Esquerdo"
-								id="punhoEsquerdo"
-								className={classNames(
-									{
-										'p-invalid': errors.punhoEsquerdo,
-									},
-									'mt-2'
+
+							<Controller
+								name="punhoEsquerdo"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Punho esquerdo"
+										id="punhoEsquerdo"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('punhoEsquerdo', {})}
 							/>
 							{getFormErrorMessage(errors.punhoEsquerdo)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="punhoDireito">
 								Punho Direito
 							</label>
-							<InputText
-								placeholder="Punho Direito"
-								id="punhoDireito"
-								className={classNames(
-									{
-										'p-invalid': errors.punhoDireito,
-									},
-									'mt-2'
+
+							<Controller
+								name="punhoDireito"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Punho direito"
+										id="punhoDireito"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('punhoDireito', {})}
 							/>
 							{getFormErrorMessage(errors.punhoDireito)}
 						</div>
@@ -216,7 +350,7 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 					<div className="flex">
 						<div className="col-6">
 							<Controller
-								name="tipo"
+								name="tipoComposicaoCorporal"
 								control={control}
 								render={({ field }) => (
 									<>
@@ -226,8 +360,8 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 													inputId="f5"
 													{...field}
 													inputRef={field.ref}
-													value="pregasCutaneas"
-													checked={field.value === 'pregasCutaneas'}
+													value="PREGAS_CUTANEAS"
+													checked={field.value === 'PREGAS_CUTANEAS'}
 												/>
 												<label htmlFor="f5" className="ml-1 mr-3">
 													Pregas Cutâneas
@@ -237,8 +371,9 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 												<RadioButton
 													inputId="f6"
 													{...field}
-													value="biompedância"
-													checked={field.value === 'biompedância'}
+													value="BIOIMPEDANCIA"
+													checked={field.value === 'BIOIMPEDANCIA'}
+													disabled
 												/>
 												<label htmlFor="f6" className="ml-1 mr-3">
 													Biompedância
@@ -253,7 +388,15 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="protocolo">
 								Protocolo
 							</label>
+
 							<InputText
+								placeholder="Protocolo"
+								value='4 pregas Falkner'
+								disabled
+							/>
+
+							<InputText
+								hidden
 								placeholder="Protocolo"
 								id="protocolo"
 								className={classNames(
@@ -263,6 +406,7 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 									'mt-2'
 								)}
 								{...register('protocolo', {})}
+								value='QUATRO_PREGAS_FAULKNER'
 							/>
 							{getFormErrorMessage(errors.protocolo)}
 						</div>
@@ -272,50 +416,82 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="biceps">
 								Bíceps
 							</label>
-							<InputText
-								placeholder="Bíceps"
-								id="biceps"
-								className={classNames(
-									{
-										'p-invalid': errors.biceps,
-									},
-									'mt-2'
+
+							<Controller
+								name="biceps"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Bíceps"
+										id="biceps"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('biceps', {})}
 							/>
 							{getFormErrorMessage(errors.biceps)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="abdominal">
 								Abdominal
 							</label>
-							<InputText
-								placeholder="Abdominal"
-								id="abdominal"
-								className={classNames(
-									{
-										'p-invalid': errors.abdominal,
-									},
-									'mt-2'
+
+							<Controller
+								name="abdominal"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Abnominal"
+										id="abdominal"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('abdominal', {})}
 							/>
 							{getFormErrorMessage(errors.abdominal)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="triceps">
 								Tríceps
 							</label>
-							<InputText
-								placeholder="Tríceps"
-								id="triceps"
-								className={classNames(
-									{
-										'p-invalid': errors.triceps,
-									},
-									'mt-2'
+
+							<Controller
+								name="triceps"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Tríceps"
+										id="triceps"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('triceps', {})}
 							/>
 							{getFormErrorMessage(errors.triceps)}
 						</div>
@@ -325,103 +501,168 @@ export const AvaliacaoFisica = ({ setFormData, setActiveIndex }: any) => {
 							<label className="font-bold" htmlFor="suprailíaca">
 								Suprailíaca
 							</label>
-							<InputText
-								placeholder="Suprailíaca"
-								id="suprailíaca"
-								className={classNames(
-									{
-										'p-invalid': errors.suprailíaca,
-									},
-									'mt-2'
+
+							<Controller
+								name="suprailiaca"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Suprailíaca"
+										id="triceps"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('suprailíaca', {})}
 							/>
-							{getFormErrorMessage(errors.suprailíaca)}
+							{getFormErrorMessage(errors.suprailiaca)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="axiliarMedia">
 								Axiliar Média
 							</label>
-							<InputText
-								placeholder="Axiliar Média"
-								id="axiliarMedia"
-								className={classNames(
-									{
-										'p-invalid': errors.axiliarMedia,
-									},
-									'mt-2'
+
+							<Controller
+								name="axilarMedia"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Axilar média"
+										id="triceps"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('axiliarMedia', {})}
 							/>
-							{getFormErrorMessage(errors.axiliarMedia)}
+							{getFormErrorMessage(errors.axilarMedia)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="subscapular">
 								Subscapular
 							</label>
-							<InputText
-								placeholder="Subscapular"
-								id="subscapular"
-								className={classNames(
-									{
-										'p-invalid': errors.subscapular,
-									},
-									'mt-2'
+
+							<Controller
+								name="subscapular"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Subscapular"
+										id="subscapular"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('subscapular', {})}
 							/>
 							{getFormErrorMessage(errors.subscapular)}
 						</div>
 					</div>
+
 					<div className="flex">
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="torax">
 								Torax
 							</label>
-							<InputText
-								placeholder="Torax"
-								id="torax"
-								className={classNames(
-									{
-										'p-invalid': errors.torax,
-									},
-									'mt-2'
+
+							<Controller
+								name="torax"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Tórax"
+										id="torax"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('torax', {})}
 							/>
 							{getFormErrorMessage(errors.torax)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="Coxa">
 								Coxa
 							</label>
-							<InputText
-								placeholder="Coxa"
-								id="coxa"
-								className={classNames(
-									{
-										'p-invalid': errors.coxa,
-									},
-									'mt-2'
+
+							<Controller
+								name="coxa"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Coxa"
+										id="coxa"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('coxa', {})}
 							/>
 							{getFormErrorMessage(errors.coxa)}
 						</div>
+
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="panturrilhaMedial">
 								Panturrilha Medial
 							</label>
-							<InputText
-								placeholder="Panturrilha Medial"
-								id="panturrilhaMedial"
-								className={classNames(
-									{
-										'p-invalid': errors.panturrilhaMedial,
-									},
-									'mt-2'
+
+							<Controller
+								name="panturrilhaMedial"
+								control={control}
+								rules={{ required: "Campo é obrigatório" }}
+								render={({ field }) => (
+									<InputNumber
+										onValueChange={(e) => field.onChange(e)}
+										locale='pt-BR'
+										minFractionDigits={2}
+										placeholder="Panturrilha medial"
+										id="torax"
+										className={classNames(
+											{
+												'p-invalid': errors.peso,
+											},
+											'mt-2'
+										)}
+									/>
 								)}
-								{...register('panturrilhaMedial', {})}
 							/>
 							{getFormErrorMessage(errors.panturrilhaMedial)}
 						</div>
