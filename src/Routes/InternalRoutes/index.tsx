@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { Acompanhamento } from '../../Pages/Acompanhamento';
 import { AgendamentosPage } from '../../Pages/Agendamentos';
 import { AtendimentoNutricionista } from '../../Pages/AtendimentoNutricionista';
 import { AtendimentoNutrologo } from '../../Pages/AtendimentoNutrologo';
@@ -14,6 +15,7 @@ export const InternalRoutes = () => {
 			<Route path="/pacientes" element={<PacientesPage />} />
 			<Route path="/usuarios" element={<UsuariosPage />} />
 			<Route path="/atendimento-nutrologo" element={<AtendimentoNutrologo />} />
+			<Route path="/acompanhamento" element={<Acompanhamento />} />
 			<Route
 				path="/atendimento-nutricionista"
 				element={<AtendimentoNutricionista />}

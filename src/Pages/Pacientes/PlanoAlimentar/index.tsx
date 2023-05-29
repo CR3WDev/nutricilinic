@@ -33,7 +33,11 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 	useEffect(() => {
 		console.log(diasSelecionados);
 	}, [diasSelecionados]);
-
+	useEffect(() => {
+		return () => {
+			dispatch(setMode('search'));
+		};
+	});
 	return (
 		<div>
 			<h1>Refeições</h1>
@@ -46,14 +50,14 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 				/>
 				<div className="my-3">
 					<div>
-						<span className="font-bold">{rowSelected.nome}</span>
+						<span className="font-bold">{rowSelected?.nome}</span>
 					</div>
 					<div>
-						<span>{rowSelected.idade}</span> anos
-						<span> {rowSelected.sexo}</span>
+						<span>{rowSelected?.idade}</span> anos
+						<span> {rowSelected?.sexo}</span>
 					</div>
 					<div>
-						Pontuário:<span> {rowSelected.pontuario}</span>
+						Pontuário:<span> {rowSelected?.pontuario}</span>
 					</div>
 				</div>
 			</div>

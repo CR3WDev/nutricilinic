@@ -44,14 +44,14 @@ export const PacientesMenu = () => {
 					/>
 					<div className="my-3">
 						<div>
-							<span className="font-bold">{paciente.nome}</span>
+							<span className="font-bold">{paciente?.nome}</span>
 						</div>
 						<div>
-							<span>{paciente.idade}</span> anos
-							<span> {paciente.sexo}</span>
+							<span>{paciente?.idade}</span> anos
+							<span> {paciente?.sexo}</span>
 						</div>
 						<div>
-							Prontuário:<span> {paciente.id}</span>
+							Prontuário:<span> {paciente?.id}</span>
 						</div>
 					</div>
 				</div>
@@ -92,6 +92,9 @@ export const PacientesMenu = () => {
 						icon="pi pi-plus-circle"
 						label="Novo acompanhamento"
 						severity="secondary"
+						onClick={() => {
+							navigate('/acompanhamento');
+						}}
 						text
 					/>
 					<Button
@@ -122,6 +125,7 @@ export const PacientesMenu = () => {
 		if (mode !== 'pacienteInformacoes') return <></>;
 		return <PacientesInformacoes />;
 	};
+
 	return (
 		<>
 			{showMenu()}
