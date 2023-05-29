@@ -2,6 +2,7 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
+import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { ToggleButton } from 'primereact/togglebutton';
 import { useEffect, useState } from 'react';
@@ -19,6 +20,7 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 		'Sábado',
 		'Domingo',
 	];
+	const [isOpenDialog, setIsOpenDialog] = useState(false);
 	const dispatch = useDispatch();
 	const [diasSelecionados, setDiasSelecionados] = useState<Array<string>>([]);
 	const [descricao, setDescricao] = useState<string>('');
@@ -37,7 +39,36 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 		return () => {
 			dispatch(setMode('search'));
 		};
-	});
+	}, []);
+	const dialogContent = (mode: string) => {
+		if (mode === 'finish')
+			return (
+				<>
+					<div className="flex justify-content-center flex-column align-items-center">
+						<h3>Atendimento Finalizado com Sucesso!</h3>
+						<div>
+							<i
+								style={{
+									fontSize: 100,
+									color: '#28A745',
+									marginTop: '30px',
+									marginBottom: '30px',
+								}}
+								className="pi pi-check-circle"
+							></i>
+						</div>
+					</div>
+					<div className="flex justify-content-center">
+						<Button
+							label="finalizar"
+							onClick={() => {
+								dispatch(setMode('search'));
+							}}
+						/>
+					</div>
+				</>
+			);
+	};
 	return (
 		<div>
 			<h1>Refeições</h1>
@@ -155,15 +186,43 @@ export const PlanoAlimentar = ({ rowSelected }: any) => {
 					</Accordion>
 				</div>
 			</Card>
-			<div className="my-3">
-				<Button
-					onClick={() => {
-						dispatch(setMode('search'));
-					}}
-				>
-					Voltar
-				</Button>
+			<div className="my-3 flex justify-content-between">
+				<div>
+					<Button
+						onClick={() => {
+							dispatch(setMode('search'));
+						}}
+					>
+						Voltar
+					</Button>
+				</div>
+				<div>
+					<Button
+						className="mr-3"
+						onClick={() => {
+							dispatch(setMode('search'));
+						}}
+					>
+						Salvar
+					</Button>
+					<Button
+						onClick={() => {
+							setIsOpenDialog(true);
+						}}
+					>
+						Finalizar
+					</Button>
+				</div>
 			</div>
+			<Dialog
+				visible={isOpenDialog}
+				closable={false}
+				draggable={false}
+				onHide={() => {
+					setIsOpenDialog(false);
+				}}
+				children={dialogContent('finish')}
+			></Dialog>
 		</div>
 	);
 };
