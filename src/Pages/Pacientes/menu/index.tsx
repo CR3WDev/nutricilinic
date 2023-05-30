@@ -9,13 +9,12 @@ import { setMode, useMode } from '../../../Redux/mode';
 import { api } from '../../../Services/axios';
 import { PacientesHistorico } from '../PacienteHistorico';
 import { PacientesInformacoes } from '../PacienteInformacoes';
-import { PlanoAlimentar } from '../PlanoAlimentar';
 
 export const PacientesMenu = () => {
 	const mode = useSelector(useMode);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const [rowSelected, setRowSelected] = useState();
+	const [rowSelected, setRowSelected] = useState<any>();
 	const [pacientes, setPacientes] = useState([]);
 
 	async function carregarPacientes() {
@@ -58,8 +57,7 @@ export const PacientesMenu = () => {
 				<div className="flex align-items-center">
 					<Button
 						onClick={() => {
-							dispatch(setMode('planoAlimentar'));
-							setRowSelected(paciente);
+							navigate(`/plano-alimentar/${paciente.id}`);
 						}}
 						text
 						severity="warning"
@@ -117,10 +115,6 @@ export const PacientesMenu = () => {
 		if (mode !== 'historico') return <></>;
 		return <PacientesHistorico rowSelected={rowSelected} />;
 	};
-	const showPlanoAlimentar = () => {
-		if (mode !== 'planoAlimentar') return <></>;
-		return <PlanoAlimentar rowSelected={rowSelected} />;
-	};
 	const showInformacoes = () => {
 		if (mode !== 'pacienteInformacoes') return <></>;
 		return <PacientesInformacoes />;
@@ -130,7 +124,6 @@ export const PacientesMenu = () => {
 		<>
 			{showMenu()}
 			{showHistorico()}
-			{showPlanoAlimentar()}
 			{showInformacoes()}
 		</>
 	);

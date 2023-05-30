@@ -1,7 +1,8 @@
 export const refeicoes = [
 	{
 		nome: 'Café da manhã',
-		horário: '07:30',
+		horario: '07:30',
+		observacoes: 'Tomar muita água',
 		alimentos: [
 			{ nome: 'Café (Xícara De Café: 0,5).' },
 			{ nome: 'Leite de vac desnatado (Xícara De Chá: 0,5).' },

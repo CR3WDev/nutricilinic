@@ -3,18 +3,21 @@ import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { useState } from 'react';
-import { Refeicoes } from '../../Pacientes/Refeicoes';
+import { useNavigate } from 'react-router-dom';
 
-export const ResultadosNutricionista = ({ setActiveIndex, resultadoAvaliacao }: any) => {
-	const [openRefeicoes, setOpenRefeicoes] = useState(false);
-
-	console.log(resultadoAvaliacao)
-
+export const ResultadosNutricionista = ({ resultadoAvaliacao }: any) => {
+	const navigate = useNavigate();
+	const [rowSelected, setRowSelected] = useState({ id: 4 });
 	return (
 		<div>
 			<div>
 				<Card>
-					<DataTable responsiveLayout="scroll" scrollable scrollHeight="400px" value={resultadoAvaliacao}>
+					<DataTable
+						responsiveLayout="scroll"
+						scrollable
+						scrollHeight="400px"
+						value={resultadoAvaliacao}
+					>
 						<Column field="parametro" header="Tipo"></Column>
 						<Column field="valorAtual" header="Atual"></Column>
 						<Column field="recomendacao" header="Recomendação"></Column>
@@ -24,18 +27,13 @@ export const ResultadosNutricionista = ({ setActiveIndex, resultadoAvaliacao }: 
 						<Button
 							label="continuar"
 							onClick={() => {
-								setOpenRefeicoes(true);
+								navigate(`/plano-alimentar/${rowSelected.id}`);
+								console.log('get informações do usuário');
 							}}
 						/>
 					</div>
 				</Card>
 			</div>
-			<Refeicoes
-				visible={openRefeicoes}
-				onHide={() => {
-					setOpenRefeicoes(false);
-				}}
-			/>
 		</div>
 	);
 };

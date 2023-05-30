@@ -46,7 +46,12 @@ export const AtendimentoNutricionista = () => {
 				/>
 			);
 		if (activeIndex === 2)
-			return <ResultadosNutricionista setActiveIndex={setActiveIndex} resultadoAvaliacao={resultadoAvalicao} />;
+			return (
+				<ResultadosNutricionista
+					setActiveIndex={setActiveIndex}
+					resultadoAvaliacao={resultadoAvalicao}
+				/>
+			);
 	};
 	return (
 		<div>
