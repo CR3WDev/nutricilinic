@@ -3,10 +3,13 @@ import { InputMask } from 'primereact/inputmask';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../Services/axios';
 import { Dropdown } from 'primereact/dropdown';
+import { isAxiosError } from 'axios';
+import { Toast } from 'primereact/toast';
+import { useRef } from 'react';
 
 const opcoesSexo = [
 	{
@@ -25,6 +28,7 @@ interface FormData {
 	sexo: string;
 	profissao: string;
 	anamnese: string;
+	cpf: string;
 }
 
 export const DadosPaciente = ({
@@ -33,12 +37,16 @@ export const DadosPaciente = ({
 	setFormData,
 	setIdAtendimento
 }: any) => {
+
 	const navigate = useNavigate();
 
+	const toast = useRef<any>(null);
+
 	const {
+		control,
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm<FormData>();
 
 	const getFormErrorMessage = (errors: any) => {
@@ -47,16 +55,34 @@ export const DadosPaciente = ({
 		}
 	};
 	const onSubmit = async (data: FormData) => {
-		if (activeIndex > 2) return;
-		if (activeIndex === 2) return navigate('/pacientes');
-		setFormData(data);
+		try {
+			if (activeIndex > 2) return;
+			if (activeIndex === 2) return navigate('/pacientes');
+			setFormData(data);
 
-		const response = await api.post("/atendimentos/paciente", data);
-		setActiveIndex((prev: any) => prev + 1);
-		setIdAtendimento(response.data.id);
+			const response = await api.post("/atendimentos/paciente", data);
+			setActiveIndex((prev: any) => prev + 1);
+			setIdAtendimento(response.data.id);
+		} catch (error) {
+			const isAppError = isAxiosError(error);
+			if (isAppError) {
+				let message = `${error.response?.data.detail}`;
+
+				const hasProblemObjects = error.response?.data.problemObjects;
+				if (hasProblemObjects) {
+					message = `${error.response?.data.problemObjects.map((problemObject: any) => problemObject.userMessage + "\n")}`;
+				}
+
+				toast.current?.show({ severity: 'error', summary: 'Erro', detail: message });
+
+			}
+		}
 	};
+
 	return (
 		<div>
+			<Toast ref={toast} />
+
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="flex">
 					<div className="col-6 flex flex-column">
@@ -99,9 +125,9 @@ export const DadosPaciente = ({
 						{getFormErrorMessage(errors.profissao)}
 					</div>
 				</div>
-				<div className="col-6">
+				<div className="col-10 mt-2">
 					<div className="flex justify-content-between">
-						<div className="col-5 m-0 p-0 flex flex-column">
+						<div className="col-4 m-0 p-0 flex flex-column">
 							<label className="font-bold" htmlFor="dataDeNascimento">
 								Data de Nascimento
 							</label>
@@ -109,8 +135,7 @@ export const DadosPaciente = ({
 								className={classNames(
 									{
 										'p-invalid': errors.dataNascimento,
-									},
-									'mt-2'
+									}
 								)}
 								{...register('dataNascimento', {
 									required: true,
@@ -123,30 +148,64 @@ export const DadosPaciente = ({
 							{getFormErrorMessage(errors.dataNascimento)}
 						</div>
 
-						{/* <div className="col-5 m-0 p-0 flex flex-column">
-							<label className="font-bold" htmlFor="dataDeNascimento">
+						<div className="col-3 m-0 p-0 flex flex-column">
+							<label className="font-bold" htmlFor="sexo">
 								Sexo
 							</label>
 
-							<Dropdown
-								options={opcoesSexo}
-								optionLabel="descricao"
-								optionValue="codigo"
-								placeholder="Sexo"
-								className="w-full md:w-14rem"
-								{...register('sexo', {
-									required: true,
-								})}
+							<Controller
+								name="sexo"
+								control={control}
+								rules={{ required: 'Sexo é obrigatório.' }}
+								render={({ field }) => (
+									<Dropdown
+										value={field.value}
+										optionLabel="descricao"
+										optionValue='codigo'
+										placeholder="Sexo"
+										options={opcoesSexo}
+										focusInputRef={field.ref}
+										onChange={(e) => field.onChange(e.value)}
+										className="w-full md:w-14rem"
+									/>
+								)}
 							/>
 
 							{getFormErrorMessage(errors.sexo)}
-						</div> */}
+						</div>
+
+						<div className="col-3 m-0 p-0 flex flex-column">
+
+							<label className="font-bold" htmlFor="dataDeNascimento">
+								CPF
+							</label>
+
+							<InputMask
+								className="mb-2 w-12"
+								type="cpf"
+								id="cpf"
+								placeholder="CPF"
+								mask="999.999.999-99"
+								maxLength={11}
+								{...register("cpf", {
+									required: true,
+									minLength: 11,
+								})}
+							/>
+
+							<div>
+								{errors.cpf && (
+									<span className="p-error">Campo obrigatório!</span>
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
 				<div className="col-12">
 					<label className="font-bold mb-2" htmlFor="anamnese">
 						Anamnese
 					</label>
+
 					<InputTextarea
 						id="anamnese"
 						placeholder="Anamnese"
@@ -163,7 +222,7 @@ export const DadosPaciente = ({
 					{getFormErrorMessage(errors.anamnese)}
 				</div>
 				<div className="flex justify-content-end">
-					<Button label="continuar" />
+					<Button label="Continuar" loading={isSubmitting} />
 				</div>
 			</form>
 		</div>

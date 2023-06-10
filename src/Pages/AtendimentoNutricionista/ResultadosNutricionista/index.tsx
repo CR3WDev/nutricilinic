@@ -6,8 +6,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const ResultadosNutricionista = ({ resultadoAvaliacao }: any) => {
+
 	const navigate = useNavigate();
 	const [rowSelected, setRowSelected] = useState({ id: 4 });
+
 	return (
 		<div>
 			<div>
@@ -23,6 +25,7 @@ export const ResultadosNutricionista = ({ resultadoAvaliacao }: any) => {
 						<Column field="recomendacao" header="Recomendação"></Column>
 						<Column field="situacao" header="Situação"></Column>
 					</DataTable>
+
 					<div className="flex justify-content-end mt-3">
 						<Button
 							label="continuar"

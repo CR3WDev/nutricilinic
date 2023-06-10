@@ -34,7 +34,7 @@ interface FormData {
 
 export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAvalicao }: any) => {
 	const {
-		formState: { errors },
+		formState: { errors, isLoading },
 		register,
 		control,
 		setValue,
@@ -669,7 +669,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					</div>
 				</Fieldset>
 				<div className="flex justify-content-end">
-					<Button label="continuar" />
+					<Button label="Continuar" loading={isLoading} />
 				</div>
 			</form>
 		</div>
