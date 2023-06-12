@@ -158,7 +158,7 @@ export const MainContent = () => {
 						value={solicitacaoAgentamento}
 						onChange={(e) => setSolicitacoesAgendamento(e.value)}
 						options={pacientes2}
-						optionLabel="name"
+						optionLabel="nome"
 					/>
 				</div>
 				<div>
