@@ -78,6 +78,7 @@ export const LoginPage = () => {
                 required: true,
                 minLength: 11,
               })}
+              autoClear={false}
             />
 
             <div>
