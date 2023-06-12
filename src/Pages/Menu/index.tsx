@@ -1,8 +1,27 @@
+import { useEffect, useState } from "react";
 import { SidebarComponent } from "../../Components/Layout/Sidebar";
 import { Topbar } from "../../Components/Layout/Topbar";
 import { InternalRoutes } from "../../Routes/InternalRoutes";
+import { ACCESS_TOKEN_KEY } from "../../Utils/sessionStorageKeys";
+import { useNavigate } from "react-router-dom";
 
 export const MenuPage = () => {
+
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    if (!token) {
+      navigate("/");
+    }
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <div className="flex">
       <SidebarComponent />

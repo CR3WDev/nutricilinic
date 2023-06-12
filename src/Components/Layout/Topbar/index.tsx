@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useObterIniciais } from '../../../Utils/hooks/useObterIniciais';
 import {
+	ACCESS_TOKEN_KEY,
 	NOME_USUARIO_KEY,
 	PERFIL_USUARIO_KEY,
 } from '../../../Utils/sessionStorageKeys';
@@ -18,20 +19,21 @@ export const Topbar = () => {
 	const menu = useRef<Menu>(null);
 	const navigate = useNavigate();
 	const handleLogout = () => {
-		const loginResponse = sessionStorage.getItem('LoginResponseDTO');
+		sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+		sessionStorage.removeItem(NOME_USUARIO_KEY);
+		sessionStorage.removeItem(PERFIL_USUARIO_KEY);
 		navigate('/');
-		console.log(loginResponse);
 	};
 	const items: MenuItem[] = [
 		{
 			label: 'Ajuda',
 			icon: 'pi pi-refresh',
-			command: () => {},
+			command: () => { },
 		},
 		{
 			label: 'Notificações',
 			icon: 'pi pi-bell',
-			command: () => {},
+			command: () => { },
 		},
 		{ separator: true },
 		{
