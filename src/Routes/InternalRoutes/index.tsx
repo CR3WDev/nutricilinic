@@ -10,18 +10,20 @@ import { UsuariosPage } from '../../Pages/Usuarios';
 
 export const InternalRoutes = () => {
 
-	<Routes>
-		<Route path="/main" element={<MainPage />} />
-		<Route path="/agendamentos" element={<AgendamentosPage />} />
-		<Route path="/pacientes" element={<PacientesMenu />} />
-		<Route path="/usuarios" element={<UsuariosPage />} />
-		<Route path="/atendimento-nutrologo" element={<AtendimentoNutrologo />} />
-		<Route path="/acompanhamento" element={<Acompanhamento />} />
-		<Route
-			path="/atendimento-nutricionista"
-			element={<AtendimentoNutricionista />}
-		/>
-		<Route path="/plano-alimentar/:id" element={<PlanoAlimentar />} />
-	</Routes>
+	return (
+		<Routes>
+			<Route path="/main" element={<MainPage />} />
+			<Route path="/agendamentos" element={<AgendamentosPage />} />
+			<Route path="/pacientes" element={<PacientesMenu />} />
+			<Route path="/usuarios" element={<UsuariosPage />} />
+			<Route path="/atendimento-nutrologo" element={<AtendimentoNutrologo />} />
+			<Route path="/acompanhamento" element={<Acompanhamento />} />
+			<Route
+				path="/atendimento-nutricionista"
+				element={<AtendimentoNutricionista />}
+			/>
+			<Route path="/plano-alimentar/:id" element={<PlanoAlimentar />} />
+		</Routes>
+	);
 
 };
