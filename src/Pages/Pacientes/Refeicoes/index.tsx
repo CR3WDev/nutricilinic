@@ -43,25 +43,29 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 		}
 	};
 
-	const actionsColumns = (usuario: any) => {
+	const actionsColumns = (alimento: any) => {
 		return (
 			<div style={{ display: 'flex', width: '70px' }}>
-				<Button
-					type="button"
-					icon="pi pi-pencil"
-					style={{ height: '20px' }}
-					className=" p-button-text mr-2"
-					onClick={() => {
-						setEditMode(true), setAlimentoSelected(usuario);
-					}}
-				/>
 				<Button
 					type="button"
 					icon="pi pi-trash"
 					style={{ height: '20px' }}
 					severity="danger"
 					className=" p-button-text mr-2"
-					onClick={() => console.log('oi')}
+					onClick={() => {
+						const newAlimentosTable = alimentosTable.filter((item: any) => {
+							console.log(item);
+							item?.id != alimento.id;
+						});
+						// setAlimentosTable((prev: any) => {
+						// 	return prev.filter((item: any) => {
+						// 		item.id !== alimento.id;
+						// 	});
+						// });
+						console.log({ alimento });
+						console.log({ alimentosTable });
+						console.log({ newAlimentosTable });
+					}}
 				/>
 			</div>
 		);
@@ -136,10 +140,6 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 						emptyMessage="Nenhuma refeição cadastrada"
 					>
 						<Column field="alimento" header="Alimento"></Column>
-						<Column field="proteinas" header="Proteínas"></Column>
-						<Column field="carboidratos" header="Carboidratos"></Column>
-						<Column field="lipidios" header="Lipídeos"></Column>
-						<Column field="calorias" header="Calorias"></Column>
 						<Column field="quantidade" header="Quantidade"></Column>
 						<Column
 							body={(data) => actionsColumns(data)}
