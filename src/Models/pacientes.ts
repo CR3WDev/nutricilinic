@@ -1,8 +1,11 @@
 export interface IPaciente {
-  nome: string;
-  code: string;
-  sexo?: string;
-  peso?: number;
-  dataAgendamento?: Date;
-  status?: "aprovado" | "recusado" | "";
+	id: number;
+	nome: string;
+	code: string;
+	sexo?: string;
+	idade?: number;
+	peso?: number;
+	pontuario?: string;
+	dataAgendamento?: Date;
+	status?: 'aprovado' | 'recusado' | '';
 }

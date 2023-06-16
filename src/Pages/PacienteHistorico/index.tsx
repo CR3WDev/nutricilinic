@@ -6,11 +6,16 @@ import { DataTable } from 'primereact/datatable';
 import { Divider } from 'primereact/divider';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setMode } from '../../../Redux/mode';
-import { api } from '../../../Services/axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import { IPaciente } from '../../Models/pacientes';
+import { setMode } from '../../Redux/mode';
+import { api } from '../../Services/axios';
 
-export const PacientesHistorico = ({ rowSelected }: any) => {
+export const PacientesHistorico = () => {
 	const [historico, setHistorico] = useState([]);
+	const [paciente, setPaciente] = useState<IPaciente>();
+	const navigate = useNavigate();
+	const { id, local } = useParams();
 
 	const dispatch = useDispatch();
 	const actionsColumns = (usuario: any) => {
@@ -25,17 +30,17 @@ export const PacientesHistorico = ({ rowSelected }: any) => {
 			</div>
 		);
 	};
-	useEffect(() => {
-		console.log(rowSelected);
-	}, []);
+
 	async function buscarHistorico() {
-		const response = await api.get(
-			`/nutricionista/pacientes/${rowSelected.id}/historico`
-		);
+		const response = await api.get(`/nutricionista/pacientes/${id}/historico`);
 		setHistorico(response.data);
 	}
-
+	const buscarPaciente = async () => {
+		const response = await api.get(`/pacientes/${id}`);
+		setPaciente(response.data);
+	};
 	useEffect(() => {
+		buscarPaciente();
 		buscarHistorico();
 	}, []);
 
@@ -52,20 +57,19 @@ export const PacientesHistorico = ({ rowSelected }: any) => {
 					/>
 					<div className="my-3">
 						<div>
-							<span className="font-bold">{rowSelected.nome}</span>
+							<span className="font-bold">{paciente?.nome}</span>
 						</div>
 						<div>
-							<span>{rowSelected.idade}</span> anos
-							<span> {rowSelected.sexo}</span>
+							<span>{paciente?.idade}</span> anos
+							<span> {paciente?.sexo}</span>
 						</div>
 						<div>
-							Pontuário:<span> {rowSelected.pontuario}</span>
+							Pontuário:<span> {paciente?.id}</span>
 						</div>
 					</div>
 				</div>
 				<Divider />
 				<DataTable
-					responsiveLayout="scroll"
 					value={historico}
 					scrollable
 					scrollHeight="400px"
@@ -84,6 +88,8 @@ export const PacientesHistorico = ({ rowSelected }: any) => {
 					<Button
 						text
 						onClick={() => {
+							if (local === 'menu') navigate('/main');
+							if (local === 'paciente') navigate('/pacientes');
 							dispatch(setMode('search'));
 						}}
 					>

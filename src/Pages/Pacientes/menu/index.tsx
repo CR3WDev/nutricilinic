@@ -3,16 +3,13 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { DataView } from 'primereact/dataview';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setMode, useMode } from '../../../Redux/mode';
+import { useMode } from '../../../Redux/mode';
 import { api } from '../../../Services/axios';
-import { PacientesHistorico } from '../PacienteHistorico';
-import { PacientesInformacoes } from '../PacienteInformacoes';
 
 export const PacientesMenu = () => {
 	const mode = useSelector(useMode);
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [rowSelected, setRowSelected] = useState<any>();
 	const [pacientes, setPacientes] = useState([]);
@@ -29,19 +26,14 @@ export const PacientesMenu = () => {
 	const itemTemplate = (paciente: any) => {
 		return (
 			<div className="flex w-full">
-				<div
-					className="h-full flex align-items-center w-full cursor-pointer"
-					onClick={() => {
-						dispatch(setMode('pacienteInformacoes'));
-					}}
-				>
+				<div className="h-full flex align-items-center w-full">
 					<Avatar
 						className="mr-2"
 						icon="pi pi-user"
 						size="xlarge"
 						shape="circle"
 					/>
-					<div className="my-3">
+					<div className="my-3 w-full">
 						<div>
 							<span className="font-bold">{paciente?.nome}</span>
 						</div>
@@ -65,7 +57,7 @@ export const PacientesMenu = () => {
 					></Button>
 					<Button
 						onClick={() => {
-							dispatch(setMode('historico'));
+							navigate(`/paciente-historico/${paciente.id}/paciente`);
 							setRowSelected(paciente);
 						}}
 						text
@@ -105,26 +97,12 @@ export const PacientesMenu = () => {
 						text
 					/>
 				</div>
-				<Card className="flex justify-content-center mt-3 w-full">
+				<Card>
 					<DataView value={pacientes} itemTemplate={itemTemplate} />
 				</Card>
 			</div>
 		);
 	};
-	const showHistorico = () => {
-		if (mode !== 'historico') return <></>;
-		return <PacientesHistorico rowSelected={rowSelected} />;
-	};
-	const showInformacoes = () => {
-		if (mode !== 'pacienteInformacoes') return <></>;
-		return <PacientesInformacoes />;
-	};
 
-	return (
-		<>
-			{showMenu()}
-			{showHistorico()}
-			{showInformacoes()}
-		</>
-	);
+	return showMenu();
 };

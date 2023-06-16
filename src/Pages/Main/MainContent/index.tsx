@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { ListBox } from 'primereact/listbox';
 import { Tag } from 'primereact/tag';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IPaciente } from '../../../Models/pacientes';
 import { api } from '../../../Services/axios';
 import { pacientes2 } from '../../../Utils/mock/pacientes';
@@ -15,6 +16,7 @@ export const MainContent = () => {
 	const [selectedPaciente, setSelectedPaciente] = useState(null);
 	const [solicitacaoAgentamento, setSolicitacoesAgendamento] = useState();
 	const [solicitacaoAgentamentoDia, setSolicitacoesAgendamentoDia] = useState();
+	const navigate = useNavigate();
 
 	function obterIniciais(nomeCompleto: string) {
 		let palavras = nomeCompleto.split(' ');
@@ -136,7 +138,10 @@ export const MainContent = () => {
 						filter
 						filterPlaceholder="Buscar por paciente"
 						value={selectedPaciente}
-						onChange={(e) => setSelectedPaciente(e.value)}
+						onChange={(e) => {
+							navigate('/paciente-historico/' + e?.value?.id + '/menu');
+							setSelectedPaciente(e.value);
+						}}
 						options={pacientes}
 						optionLabel="nome"
 						className="w-full"

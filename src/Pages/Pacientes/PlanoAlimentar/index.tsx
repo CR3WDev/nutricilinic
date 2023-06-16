@@ -11,39 +11,99 @@ import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setMode } from '../../../Redux/mode';
-import { refeicoes } from '../../../Utils/mock/refeicoes';
 import { Refeicoes } from '../Refeicoes';
 import { api } from '../../../Services/axios';
 
 
-interface PlanoAlimentarProps {
+interface PlanoAlimentarScreemProps {
 	idAtendimento?: number;
 }
 
+interface PlanoAlimentarProps {
+	id: number;
+	descricao: string;
+	segunda: boolean;
+	terca: boolean;
+	quarta: boolean;
+	quinta: boolean;
+	sexta: boolean
+	sabado: boolean;
+	domingo: boolean;
+}
+
 interface DiaSemanaProps {
+	codigo: string;
 	descricao: string;
 	ativo: boolean;
 }
 
-export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
+interface AlimentoRefeicaoProps {
+	descricao: string;
+	idAlimento: number;
+	quantidade: number;
+	idMedida: number;
+}
+
+interface RefeicaoProps {
+	descricao: string;
+	horario: string;
+	alimentos: AlimentoRefeicaoProps[];
+	observacao: string;
+}
+
+export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => {
+
 	const [rowSelected, setRowSelected] = useState<any>();
 
-	const diasDaSemana = [
-		'Segunda',
-		'Terça',
-		'Quarta',
-		'Quinta',
-		'Sexta',
-		'Sábado',
-		'Domingo',
-	];
+	const [diasDaSemana, setDiasDaSemana] = useState<DiaSemanaProps[]>([
+		{
+			codigo: "SEGUNDA",
+			descricao: "Segunda",
+			ativo: true
+		},
+		{
+			codigo: "TERCA",
+			descricao: "Terça",
+			ativo: true
+		},
+		{
+			codigo: "QUARTA",
+			descricao: "Quarta",
+			ativo: true
+		},
+		{
+			codigo: "QUINTA",
+			descricao: "Quinta",
+			ativo: true
+		},
+		{
+			codigo: "SEXTA",
+			descricao: "Sexta",
+			ativo: true
+		},
+		{
+			codigo: "SABADO",
+			descricao: "Sabado",
+			ativo: true
+		},
+		{
+			codigo: "DOMINGO",
+			descricao: "Domingo",
+			ativo: true
+		}
+	]);
+
+	const [planoAlimentar, setPlanoAlimentar] = useState<PlanoAlimentarProps>();
+
+	const [refeicoes, setRefeicoes] = useState<RefeicaoProps[]>([]);
+
+	const [refeicao, setRefeicao] = useState<RefeicaoProps>();
 
 	const {
 		handleSubmit,
 		control,
-		formState: { errors },
+		formState: { errors, isLoading },
 		register,
-		setValue,
 	} = useForm();
 
 	const [isOpenDialog, setIsOpenDialog] = useState(false);
@@ -52,16 +112,6 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
-	const [diasSelecionados, setDiasSelecionados] = useState<Array<string>>([]);
-
-	const selecionarDia = (dia: string) => {
-		setDiasSelecionados((prev) =>
-			!prev.includes(dia)
-				? (prev = [...diasSelecionados, dia])
-				: (prev = prev.filter((dias) => dias !== dia))
-		);
-	};
 
 	async function buscarPacienteDoAtendimento(idAtendimento: number) {
 
@@ -76,9 +126,19 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 		});
 	}
 
+	async function buscarPlanoAlimentarDoAtendimento(idAtendimento: number) {
+
+	}
+
 	useEffect(() => {
 		if (idAtendimento) {
 			buscarPacienteDoAtendimento(idAtendimento);
+		}
+	}, [idAtendimento]);
+
+	useEffect(() => {
+		if (idAtendimento) {
+			buscarPlanoAlimentarDoAtendimento(idAtendimento);
 		}
 	}, [idAtendimento]);
 
@@ -94,19 +154,29 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 		}
 	};
 
-	const onSubmit = (data: any) => {
-		console.log(data);
+	const onSubmit = async (formData: any) => {
+
+		const data = {
+			segunda: diasDaSemana.find(dia => dia.codigo === "SEGUNDA")?.ativo,
+			terca: diasDaSemana.find(dia => dia.codigo === "TERCA")?.ativo,
+			quarta: diasDaSemana.find(dia => dia.codigo === "QUARTA")?.ativo,
+			quinta: diasDaSemana.find(dia => dia.codigo === "QUINTA")?.ativo,
+			sexta: diasDaSemana.find(dia => dia.codigo === "SEXTA")?.ativo,
+			sabado: diasDaSemana.find(dia => dia.codigo === "SABADO")?.ativo,
+			domingo: diasDaSemana.find(dia => dia.codigo === "DOMINGO")?.ativo,
+			descricao: formData.descricao,
+			refeicoes
+		};
+
+		const response = api.post(`/atendimentos/${idAtendimento}/plano-alimentar`, data);
+
+
+
 	};
 
 	const onSave = () => {
-		dispatch(setMode('search'));
-		navigate('/pacientes');
-		console.log('Dados salvo com sucesso!');
-	};
 
-	useEffect(() => {
-		setValue('diasSemana', diasSelecionados);
-	}, [diasSelecionados]);
+	};
 
 	const dialogContent = (mode: string) => {
 		if (mode === 'finish')
@@ -138,9 +208,6 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 				</>
 			);
 	};
-
-
-	console.log(rowSelected)
 
 	return (
 		<div>
@@ -181,11 +248,21 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 									render={({ field, fieldState }) => (
 										<div className="flex flex-column align-items-center gap-2">
 											<ToggleButton
-												offLabel={diaDaSemana}
-												onLabel={diaDaSemana}
-												checked={diasSelecionados.includes(diaDaSemana)}
+												offLabel={diaDaSemana.descricao}
+												onLabel={diaDaSemana.descricao}
+												checked={diaDaSemana.ativo}
 												onChange={() => {
-													selecionarDia(diaDaSemana);
+													const diasSemanaAtualizado = diasDaSemana.map(dia => {
+														if (dia === diaDaSemana) {
+															return {
+																...dia,
+																ativo: !dia.ativo
+															}
+														} else {
+															return dia;
+														}
+													})
+													setDiasDaSemana(diasSemanaAtualizado);
 												}}
 											/>
 											{getFormErrorMessage(field.name)}
@@ -245,7 +322,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 												<div className="flex align-items-center">
 													<div className="flex flex-column">
 														<span className="vertical-align-middle">
-															{refeicao.nome}
+															{refeicao.descricao}
 														</span>
 														<span className="font-normal mt-1">
 															{refeicao.horario}
@@ -279,7 +356,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 										}
 									>
 										{refeicao.alimentos.map((alimento, index) => {
-											return <p key={index}> - {alimento.nome}</p>;
+											return <p key={index}> - {alimento.descricao}</p>;
 										})}
 									</AccordionTab>
 								);
@@ -288,30 +365,9 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 					</div>
 				</Card>
 
-				<div className="my-3 flex justify-content-between">
-					<div>
-						<Button
-							type="button"
-							onClick={() => {
-								dispatch(setMode('search'));
-								navigate('/pacientes');
-							}}
-						>
-							Voltar
-						</Button>
-					</div>
-					<div>
-						<Button
-							className="mr-3"
-							type="button"
-							onClick={() => {
-								onSave();
-							}}
-						>
-							Salvar
-						</Button>
-						<Button type="submit">Finalizar</Button>
-					</div>
+				<div className="my-3 flex justify-content-end">
+					<Button className='mr-3' label="Salvar" loading={isLoading} />
+					<Button type="submit">Finalizar</Button>
 				</div>
 			</form>
 
