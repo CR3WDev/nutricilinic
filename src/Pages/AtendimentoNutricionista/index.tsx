@@ -1,10 +1,10 @@
 import { Card } from 'primereact/card';
 import { Steps } from 'primereact/steps';
 import { useEffect, useState } from 'react';
+import { PlanoAlimentar } from '../Pacientes/PlanoAlimentar';
 import { AvaliacaoFisica } from './AvaliacaoFisica';
 import { DadosPaciente } from './DadosPaciente/index';
 import { ResultadosNutricionista } from './ResultadosNutricionista';
-import { PlanoAlimentar } from '../Pacientes/PlanoAlimentar';
 
 export const AtendimentoNutricionista = () => {
 	const [idAtendimento, setIdAtendimento] = useState();
@@ -22,7 +22,11 @@ export const AtendimentoNutricionista = () => {
 		{
 			label: 'Resultados',
 		},
+		{
+			label: 'Plano Alimentar',
+		},
 	];
+
 	useEffect(() => {
 		console.log(formData);
 	}, [formData]);
@@ -56,11 +60,7 @@ export const AtendimentoNutricionista = () => {
 			);
 
 		if (activeIndex === 3)
-			return (
-				<PlanoAlimentar
-					idAtendimento={idAtendimento}
-				/>
-			);
+			return <PlanoAlimentar idAtendimento={idAtendimento} />;
 	};
 	return (
 		<div>
