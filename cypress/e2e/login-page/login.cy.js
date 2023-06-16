@@ -9,7 +9,7 @@ describe('Página de Login', () => {
     cy.get('form').should('be.visible');
   });
 
-  it('Deve exibir erro em campos vazios', () => {
+  it('Realizar Login sem digitar os campos obrigatórios', () => {
     cy.get('form').submit();
     cy.get('.p-error').should('have.length', 2);
   });
@@ -18,10 +18,11 @@ describe('Página de Login', () => {
     cy.get('#cpf').type('123');
     cy.get('#password').type('1123456');
     cy.get('form').submit();
-    cy.get('.p-toast-message-error').should("be.visible").and('contain', 'Falha ao realizar login. Tente novamente em instantes');
+    cy.get('.p-toast-message-error').should("be.visible")
+    cy.get('.p-toast-message-error').should('contain.text', 'Usuário ou senha inválidos');
   });
 
-  it('Deve exibir erro  tentar fazer login com em senha vazia', () => {
+  it('Realizar Login digitando apenas o CPF', () => {
     cy.get('#cpf').type('12345678901');
     cy.get('form').submit();
     cy.get('.p-error').should('contain', 'Campo obrigatório');

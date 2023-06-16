@@ -4,6 +4,8 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
     },
-    baseUrl: 'http://localhost:5173'
+    baseUrl: 'http://localhost:5173',
+    viewportWidth: 1540,
+    viewportHeight: 840,
   },
 });
