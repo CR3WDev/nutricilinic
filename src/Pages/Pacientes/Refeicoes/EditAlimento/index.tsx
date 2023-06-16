@@ -46,15 +46,12 @@ export const EditAlimento = ({
 	};
 
 	const onSubmit = (data: any) => {
-		console.log(watch('alimento'));
-		console.log(watch('quantidade'));
-		console.log(watch('medida'));
 		setAlimentosTable((prev: any) => [
 			...prev,
 			{
 				id: new Date().getMilliseconds(),
 				alimento: watch('alimento')?.descricao || watch('alimento'),
-				quantidade: watch('quantidade') + watch('medida').descricao,
+				quantidade: watch('quantidade') + ' ' + watch('medida').descricao,
 			},
 		]);
 		onHide();

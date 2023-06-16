@@ -5,8 +5,9 @@ import { Dialog } from 'primereact/dialog';
 import { InputMask } from 'primereact/inputmask';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
+import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { EditAlimento } from './EditAlimento';
 
@@ -14,6 +15,7 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 	const [editMode, setEditMode] = useState(false);
 	const [alimentoSelected, setAlimentoSelected] = useState();
 	const [alimentosTable, setAlimentosTable] = useState([]);
+	const toast = useRef<any>(null);
 
 	useEffect(() => {
 		console.log(alimentosTable);
@@ -56,14 +58,7 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 						const novoArray = alimentosTable.filter(
 							(objeto: any) => objeto.id !== alimento.id
 						);
-						// setAlimentosTable((prev: any) => {
-						// 	return prev.filter((item: any) => {
-						// 		item.id !== alimento.id;
-						// 	});
-						// });
-						console.log(novoArray);
-						console.log({ alimento });
-						console.log({ alimentosTable });
+						setAlimentosTable(novoArray);
 					}}
 				/>
 			</div>
@@ -71,6 +66,12 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 	};
 
 	const onSubmit = (data: any) => {
+		if (alimentosTable.length <= 0)
+			return toast.current?.show({
+				severity: 'error',
+				summary: 'Atenção',
+				detail: 'Deve ser adicionado pelo menos 1 alimento!',
+			});
 		console.log(data);
 	};
 
@@ -206,26 +207,29 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 		);
 	};
 	return (
-		<Dialog
-			draggable={false}
-			visible={visible}
-			onHide={() => {
-				handleOnClose();
-			}}
-			header="Refeições"
-		>
-			{showTable()}
+		<>
+			<Toast ref={toast} />
+			<Dialog
+				draggable={false}
+				visible={visible}
+				onHide={() => {
+					handleOnClose();
+				}}
+				header="Refeições"
+			>
+				{showTable()}
 
-			{editMode && (
-				<EditAlimento
-					onHide={() => {
-						setEditMode(false);
-					}}
-					setAlimentosTable={setAlimentosTable}
-					alimentoSelected={alimentoSelected}
-					setAlimentoSelected={setAlimentoSelected}
-				/>
-			)}
-		</Dialog>
+				{editMode && (
+					<EditAlimento
+						onHide={() => {
+							setEditMode(false);
+						}}
+						setAlimentosTable={setAlimentosTable}
+						alimentoSelected={alimentoSelected}
+						setAlimentoSelected={setAlimentoSelected}
+					/>
+				)}
+			</Dialog>
+		</>
 	);
 };
