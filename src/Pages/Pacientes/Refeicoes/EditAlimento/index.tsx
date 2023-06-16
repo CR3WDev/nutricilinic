@@ -13,7 +13,6 @@ export const EditAlimento = ({
 	alimentoSelected,
 	setAlimentoSelected,
 }: any) => {
-
 	const [alimentosAutocomplete, setAlimentosAutocomplete] = useState([]);
 
 	const [medidas, setMedidas] = useState([]);
@@ -51,8 +50,8 @@ export const EditAlimento = ({
 			...prev,
 			{
 				id: new Date().getMilliseconds(),
-				alimento: watch('alimento'),
-				quantidade: watch('quantidade') + watch('medida').descricao,
+				alimento: watch('alimento')?.descricao || watch('alimento'),
+				quantidade: watch('quantidade') + ' ' + watch('medida').descricao,
 			},
 		]);
 		onHide();
@@ -65,7 +64,7 @@ export const EditAlimento = ({
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
 			<div className="flex">
-				<div className="col-4 flex flex-column">
+				<div className="flex flex-column">
 					<label className="font-bold">Alimento</label>
 					<Controller
 						name="alimento"
@@ -85,7 +84,7 @@ export const EditAlimento = ({
 									{
 										'p-invalid': errors.alimento,
 									},
-									'mt-2'
+									'mt-2 mx-2 w-12rem'
 								)}
 								aria-describedby="nomeCompleto-help"
 							></AutoComplete>
@@ -93,7 +92,7 @@ export const EditAlimento = ({
 					/>
 					{getFormErrorMessage(errors?.alimento)}
 				</div>
-				<div className="col-4 flex flex-column  mx-2">
+				<div className="flex flex-column">
 					<label className="font-bold">Quantidade</label>
 					<Controller
 						name="quantidade"
@@ -102,7 +101,6 @@ export const EditAlimento = ({
 						render={({ field }) => (
 							<InputNumber
 								onValueChange={(e) => field.onChange(e)}
-								// value={field.value}
 								locale="pt-BR"
 								minFractionDigits={2}
 								placeholder="Quantidade"
@@ -111,14 +109,14 @@ export const EditAlimento = ({
 									{
 										'p-invalid': errors.quantidade,
 									},
-									'mt-2'
+									'mt-2 mx-2 w-12rem'
 								)}
 							/>
 						)}
 					/>
 					{getFormErrorMessage(errors?.quantidade)}
 				</div>
-				<div className="col-4 flex flex-column">
+				<div className="flex flex-column">
 					<label className="font-bold">Medida</label>
 					<Controller
 						name="medida"
@@ -135,7 +133,7 @@ export const EditAlimento = ({
 									{
 										'p-invalid': errors.Medida,
 									},
-									'mt-2'
+									'mt-2 mx-2 w-12rem'
 								)}
 								focusInputRef={field.ref}
 								onChange={(e) => field.onChange(e.value)}

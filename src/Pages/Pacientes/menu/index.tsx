@@ -49,14 +49,6 @@ export const PacientesMenu = () => {
 				<div className="flex align-items-center">
 					<Button
 						onClick={() => {
-							navigate(`/plano-alimentar/${paciente.id}`);
-						}}
-						text
-						severity="warning"
-						icon="pi pi-calendar"
-					></Button>
-					<Button
-						onClick={() => {
 							navigate(`/paciente-historico/${paciente.id}/paciente`);
 							setRowSelected(paciente);
 						}}
