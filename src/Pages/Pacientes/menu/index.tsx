@@ -3,14 +3,13 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { DataView } from 'primereact/dataview';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useMode } from '../../../Redux/mode';
 import { api } from '../../../Services/axios';
 
 export const PacientesMenu = () => {
 	const mode = useSelector(useMode);
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [rowSelected, setRowSelected] = useState<any>();
 	const [pacientes, setPacientes] = useState([]);
@@ -98,7 +97,7 @@ export const PacientesMenu = () => {
 						text
 					/>
 				</div>
-				<Card className="flex justify-content-center mt-3 w-full">
+				<Card>
 					<DataView value={pacientes} itemTemplate={itemTemplate} />
 				</Card>
 			</div>
