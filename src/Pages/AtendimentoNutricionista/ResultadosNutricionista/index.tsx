@@ -2,13 +2,11 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const ResultadosNutricionista = ({ resultadoAvaliacao }: any) => {
+export const ResultadosNutricionista = ({ resultadoAvaliacao, setActiveIndex }: any) => {
 
 	const navigate = useNavigate();
-	const [rowSelected, setRowSelected] = useState({ id: 4 });
 
 	return (
 		<div>
@@ -30,8 +28,7 @@ export const ResultadosNutricionista = ({ resultadoAvaliacao }: any) => {
 						<Button
 							label="continuar"
 							onClick={() => {
-								navigate(`/plano-alimentar/${rowSelected.id}`);
-								console.log('get informações do usuário');
+								setActiveIndex((prev: any) => prev + 1)
 							}}
 						/>
 					</div>

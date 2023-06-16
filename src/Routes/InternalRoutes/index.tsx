@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Acompanhamento } from '../../Pages/Acompanhamento';
 import { AgendamentosPage } from '../../Pages/Agendamentos';
 import { AtendimentoNutricionista } from '../../Pages/AtendimentoNutricionista';
@@ -9,6 +9,7 @@ import { PacientesMenu } from '../../Pages/Pacientes/menu';
 import { UsuariosPage } from '../../Pages/Usuarios';
 
 export const InternalRoutes = () => {
+
 	return (
 		<Routes>
 			<Route path="/main" element={<MainPage />} />
@@ -22,6 +23,8 @@ export const InternalRoutes = () => {
 				element={<AtendimentoNutricionista />}
 			/>
 			<Route path="/plano-alimentar/:id" element={<PlanoAlimentar />} />
+			<Route path="/novo-plano-alimentar" element={<PlanoAlimentar />} />
 		</Routes>
 	);
+
 };

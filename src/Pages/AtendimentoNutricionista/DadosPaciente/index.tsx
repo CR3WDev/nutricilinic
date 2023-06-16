@@ -9,7 +9,8 @@ import { api } from '../../../Services/axios';
 import { Dropdown } from 'primereact/dropdown';
 import { isAxiosError } from 'axios';
 import { Toast } from 'primereact/toast';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { removerFormatacaoDocumento } from '../../../Utils/removerFormatacaoDocumento';
 
 const opcoesSexo = [
 	{
@@ -42,12 +43,40 @@ export const DadosPaciente = ({
 
 	const toast = useRef<any>(null);
 
+	const [idPaciente, setIdPaciente] = useState();
+
 	const {
 		control,
 		register,
 		handleSubmit,
+		reset,
 		formState: { errors, isSubmitting },
 	} = useForm<FormData>();
+
+	async function handleChangeCpf(cpf: string) {
+		try {
+			const response = await api.get(`/pacientes/cpf/${removerFormatacaoDocumento(cpf)}`);
+
+			const {
+				id,
+				nome,
+				sexo,
+				dataNascimento,
+				profissao
+			} = response.data;
+
+			setIdPaciente(id);
+
+			reset({
+				nome,
+				sexo,
+				dataNascimento,
+				profissao
+			});
+		} catch (error) {
+			return;
+		}
+	}
 
 	const getFormErrorMessage = (errors: any) => {
 		if (errors?.type === 'required') {
@@ -60,7 +89,10 @@ export const DadosPaciente = ({
 			if (activeIndex === 2) return navigate('/pacientes');
 			setFormData(data);
 
-			const response = await api.post("/atendimentos/paciente", data);
+			const response = await api.post("/atendimentos/paciente", {
+				...data,
+				idPaciente
+			});
 			setActiveIndex((prev: any) => prev + 1);
 			setIdAtendimento(response.data.id);
 		} catch (error) {
@@ -74,18 +106,47 @@ export const DadosPaciente = ({
 				}
 
 				toast.current?.show({ severity: 'error', summary: 'Erro', detail: message });
-
 			}
 		}
 	};
+
+
 
 	return (
 		<div>
 			<Toast ref={toast} />
 
 			<form onSubmit={handleSubmit(onSubmit)}>
-				<div className="flex">
-					<div className="col-6 flex flex-column">
+				<div className="col-10 flex mt-2">
+					<div className="col-3 flex flex-column">
+						<label className="font-bold" htmlFor="dataDeNascimento">
+							CPF
+						</label>
+
+						<InputMask
+							className="w-12"
+							type="cpf"
+							id="cpf"
+							placeholder="CPF"
+							mask="999.999.999-99"
+							maxLength={11}
+							{...register("cpf", {
+								required: true,
+								minLength: 11,
+								onBlur(event) {
+									handleChangeCpf(event.target.value)
+								},
+							})}
+						/>
+
+						<div>
+							{errors.cpf && (
+								<span className="p-error">Campo obrigatório!</span>
+							)}
+						</div>
+					</div>
+
+					<div className="col-7  flex flex-column">
 						<label className="font-bold" htmlFor="nomeCompleto">
 							Nome Completo
 						</label>
@@ -96,7 +157,6 @@ export const DadosPaciente = ({
 								{
 									'p-invalid': errors.nome,
 								},
-								'mt-2'
 							)}
 							aria-describedby="nomeCompleto-help"
 							{...register('nome', {
@@ -105,29 +165,11 @@ export const DadosPaciente = ({
 						/>
 						{getFormErrorMessage(errors?.nome)}
 					</div>
-					<div className="col-6 flex flex-column">
-						<label className="font-bold" htmlFor="profissao">
-							Profissão
-						</label>
-						<InputText
-							placeholder="Profissão"
-							id="profissao"
-							className={classNames(
-								{
-									'p-invalid': errors.profissao,
-								},
-								'mt-2'
-							)}
-							{...register('profissao', {
-								required: true,
-							})}
-						/>
-						{getFormErrorMessage(errors.profissao)}
-					</div>
 				</div>
+
 				<div className="col-10 mt-2">
 					<div className="flex justify-content-between">
-						<div className="col-4 m-0 p-0 flex flex-column">
+						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="dataDeNascimento">
 								Data de Nascimento
 							</label>
@@ -148,7 +190,7 @@ export const DadosPaciente = ({
 							{getFormErrorMessage(errors.dataNascimento)}
 						</div>
 
-						<div className="col-3 m-0 p-0 flex flex-column">
+						<div className="col-3 flex flex-column">
 							<label className="font-bold" htmlFor="sexo">
 								Sexo
 							</label>
@@ -174,53 +216,52 @@ export const DadosPaciente = ({
 							{getFormErrorMessage(errors.sexo)}
 						</div>
 
-						<div className="col-3 m-0 p-0 flex flex-column">
-
-							<label className="font-bold" htmlFor="dataDeNascimento">
-								CPF
+						<div className="col-3  flex flex-column">
+							<label className="font-bold" htmlFor="profissao">
+								Profissão
 							</label>
+							<InputText
+								placeholder="Profissão"
+								id="profissao"
+								className={classNames(
+									{
+										'p-invalid': errors.profissao,
+									},
 
-							<InputMask
-								className="mb-2 w-12"
-								type="cpf"
-								id="cpf"
-								placeholder="CPF"
-								mask="999.999.999-99"
-								maxLength={11}
-								{...register("cpf", {
+								)}
+								{...register('profissao', {
 									required: true,
-									minLength: 11,
 								})}
 							/>
-
-							<div>
-								{errors.cpf && (
-									<span className="p-error">Campo obrigatório!</span>
-								)}
-							</div>
+							{getFormErrorMessage(errors.profissao)}
 						</div>
+
+
 					</div>
 				</div>
-				<div className="col-12">
-					<label className="font-bold mb-2" htmlFor="anamnese">
-						Anamnese
-					</label>
 
-					<InputTextarea
-						id="anamnese"
-						placeholder="Anamnese"
-						className={classNames(
-							{
-								'p-invalid': errors.anamnese,
-							},
-							'mt-2 w-full'
-						)}
-						{...register('anamnese', {
-							required: true,
-						})}
-					/>
-					{getFormErrorMessage(errors.anamnese)}
+				<div className="col-10 flex flex-column mb-2">
+					<div className='col-10 flex flex-column mb-2'>
+						<label className="font-bold" htmlFor="anamnese">
+							Anamnese
+						</label>
+
+						<InputTextarea
+							id="anamnese"
+							placeholder="Anamnese"
+							className={classNames(
+								{
+									'p-invalid': errors.anamnese,
+								},
+							)}
+							{...register('anamnese', {
+								required: true,
+							})}
+						/>
+						{getFormErrorMessage(errors.anamnese)}
+					</div>
 				</div>
+
 				<div className="flex justify-content-end">
 					<Button label="Continuar" loading={isSubmitting} />
 				</div>

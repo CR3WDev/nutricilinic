@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { AvaliacaoFisica } from './AvaliacaoFisica';
 import { DadosPaciente } from './DadosPaciente/index';
 import { ResultadosNutricionista } from './ResultadosNutricionista';
+import { PlanoAlimentar } from '../Pacientes/PlanoAlimentar';
 
 export const AtendimentoNutricionista = () => {
 	const [idAtendimento, setIdAtendimento] = useState();
@@ -50,6 +51,14 @@ export const AtendimentoNutricionista = () => {
 				<ResultadosNutricionista
 					setActiveIndex={setActiveIndex}
 					resultadoAvaliacao={resultadoAvalicao}
+					idAtendimento={idAtendimento}
+				/>
+			);
+
+		if (activeIndex === 3)
+			return (
+				<PlanoAlimentar
+					idAtendimento={idAtendimento}
 				/>
 			);
 	};

@@ -13,9 +13,21 @@ import { useNavigate } from 'react-router-dom';
 import { setMode } from '../../../Redux/mode';
 import { refeicoes } from '../../../Utils/mock/refeicoes';
 import { Refeicoes } from '../Refeicoes';
+import { api } from '../../../Services/axios';
 
-export const PlanoAlimentar = () => {
+
+interface PlanoAlimentarProps {
+	idAtendimento?: number;
+}
+
+interface DiaSemanaProps {
+	descricao: string;
+	ativo: boolean;
+}
+
+export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 	const [rowSelected, setRowSelected] = useState<any>();
+
 	const diasDaSemana = [
 		'Segunda',
 		'Terça',
@@ -25,6 +37,7 @@ export const PlanoAlimentar = () => {
 		'Sábado',
 		'Domingo',
 	];
+
 	const {
 		handleSubmit,
 		control,
@@ -36,9 +49,12 @@ export const PlanoAlimentar = () => {
 	const [isOpenDialog, setIsOpenDialog] = useState(false);
 	const [openRefeicoes, setOpenRefeicoes] = useState(false);
 	const [refeicaoSelected, setRefeicaoSelected] = useState<any>();
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
 	const [diasSelecionados, setDiasSelecionados] = useState<Array<string>>([]);
+
 	const selecionarDia = (dia: string) => {
 		setDiasSelecionados((prev) =>
 			!prev.includes(dia)
@@ -46,34 +62,48 @@ export const PlanoAlimentar = () => {
 				: (prev = prev.filter((dias) => dias !== dia))
 		);
 	};
-	useEffect(() => {
+
+	async function buscarPacienteDoAtendimento(idAtendimento: number) {
+
+		const response = await api.get(`/atendimentos/${idAtendimento}/paciente`);
+		const { data } = response;
 		setRowSelected({
-			id: 1,
-			nome: 'Marcos Gomes da Silva',
-			sexo: 'MASCULINO',
-			dataNascimento: '1995-04-11',
-			idade: 28,
+			id: data.id,
+			nome: data.nome,
+			sexo: data.sexo,
+			dataNascimento: data.dataNascimento,
+			idade: data.idade,
 		});
-		console.log('Requisição para buscar os dados do usuário');
-	}, []);
+	}
+
+	useEffect(() => {
+		if (idAtendimento) {
+			buscarPacienteDoAtendimento(idAtendimento);
+		}
+	}, [idAtendimento]);
+
 	useEffect(() => {
 		return () => {
 			dispatch(setMode('search'));
 		};
 	}, []);
+
 	const getFormErrorMessage = (errors: any) => {
 		if (errors?.type === 'required') {
 			return <span className="p-error">Campo Obrigatório</span>;
 		}
 	};
+
 	const onSubmit = (data: any) => {
 		console.log(data);
 	};
+
 	const onSave = () => {
 		dispatch(setMode('search'));
 		navigate('/pacientes');
 		console.log('Dados salvo com sucesso!');
 	};
+
 	useEffect(() => {
 		setValue('diasSemana', diasSelecionados);
 	}, [diasSelecionados]);
@@ -108,6 +138,10 @@ export const PlanoAlimentar = () => {
 				</>
 			);
 	};
+
+
+	console.log(rowSelected)
+
 	return (
 		<div>
 			<h1>Refeições</h1>
@@ -127,10 +161,11 @@ export const PlanoAlimentar = () => {
 						<span> {rowSelected?.sexo}</span>
 					</div>
 					<div>
-						Pontuário:<span> {rowSelected?.pontuario}</span>
+						Prontuário:<span> {rowSelected?.id}</span>
 					</div>
 				</div>
 			</div>
+
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Card className="my-3">
 					<div>
@@ -161,6 +196,7 @@ export const PlanoAlimentar = () => {
 						})}
 					</div>
 				</Card>
+
 				<Card className="my-3">
 					<div className="mb-3">
 						<h3>Descrição:</h3>
@@ -179,6 +215,7 @@ export const PlanoAlimentar = () => {
 					/>
 					{getFormErrorMessage(errors.descricao)}
 				</Card>
+
 				<Card>
 					<div>
 						<div className="flex align-items-center justify-content-between">
@@ -196,6 +233,7 @@ export const PlanoAlimentar = () => {
 							</div>
 						</div>
 					</div>
+
 					<div className="mt-3">
 						<Accordion activeIndex={0}>
 							{refeicoes.map((refeicao, index) => {
@@ -249,6 +287,7 @@ export const PlanoAlimentar = () => {
 						</Accordion>
 					</div>
 				</Card>
+
 				<div className="my-3 flex justify-content-between">
 					<div>
 						<Button

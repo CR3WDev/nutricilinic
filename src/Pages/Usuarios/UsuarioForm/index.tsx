@@ -9,6 +9,7 @@ import { api } from "../../../Services/axios";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef } from "react";
 import { InputMask } from "primereact/inputmask";
+import { removerFormatacaoDocumento } from "../../../Utils/removerFormatacaoDocumento";
 
 interface FormData {
   nome: string;
@@ -19,12 +20,10 @@ interface FormData {
 interface UsuarioFormProps {
   id?: number;
   nome?: string;
-  cpf?: string;
+  cpf: string;
 };
 
 const UsuarioForm = ({ id, nome, cpf }: UsuarioFormProps) => {
-
-  console.log(cpf)
 
   const toast = useRef<any>();
 
@@ -50,7 +49,7 @@ const UsuarioForm = ({ id, nome, cpf }: UsuarioFormProps) => {
   async function cadastrarUsuario({ cpf, nome, senha }: FormData) {
     try {
       await api.post("/usuarios", {
-        cpf: cpf.replace(/[^0-9]/g, ""),
+        cpf: removerFormatacaoDocumento(cpf),
         nome,
         senha
       });
@@ -75,7 +74,7 @@ const UsuarioForm = ({ id, nome, cpf }: UsuarioFormProps) => {
   async function alterarUsuario({ nome, senha }: FormData) {
     try {
       await api.put(`/usuarios/${id}`, {
-        cpf: cpf?.replace(/[^0-9]/g, ""),
+        cpf: removerFormatacaoDocumento(cpf),
         nome,
         senha
       });

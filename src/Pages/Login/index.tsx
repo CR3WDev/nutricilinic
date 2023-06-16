@@ -7,9 +7,10 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { InputMask } from "primereact/inputmask";
 import { api } from "../../Services/axios";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ACCESS_TOKEN_KEY, NOME_USUARIO_KEY, PERFIL_USUARIO_KEY } from "../../Utils/sessionStorageKeys";
 import { isAxiosError } from "axios";
+import { removerFormatacaoDocumento } from "../../Utils/removerFormatacaoDocumento";
 
 interface FormLogin {
   login: string;
@@ -31,7 +32,7 @@ export const LoginPage = () => {
 
     try {
       const { data } = await api.post("/auth", {
-        login: login.replace(/[^0-9]/g, ""),
+        login: removerFormatacaoDocumento(login),
         senha
       });
 
@@ -78,6 +79,7 @@ export const LoginPage = () => {
                 required: true,
                 minLength: 11,
               })}
+              autoClear={false}
             />
 
             <div>
