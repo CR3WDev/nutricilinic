@@ -21,55 +21,73 @@ interface PlanoAlimentarProps {
 }
 
 interface DiaSemanaProps {
+	codigo: string;
 	descricao: string;
 	ativo: boolean;
 }
 
-export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
+interface AlimentoRefeicaoProps {
+	idAlimento: number;
+	quantidade: number;
+	idMedida: number;
+}
 
-	console.log(idAtendimento)
+interface RefeicaoProps {
+	descricao: string;
+	horario: string;
+	alimentos: AlimentoRefeicaoProps[];
+	observacao: string;
+}
+
+export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 
 	const [rowSelected, setRowSelected] = useState<any>();
 
-	const diasDaSemana = useState<DiaSemanaProps[]>([
+	const [diasDaSemana, setDiasDaSemana] = useState<DiaSemanaProps[]>([
 		{
+			codigo: "SEGUNDA",
 			descricao: "Segunda",
-			ativo: false
+			ativo: true
 		},
 		{
+			codigo: "TERCA",
 			descricao: "Terça",
-			ativo: false
+			ativo: true
 		},
 		{
+			codigo: "QUARTA",
 			descricao: "Quarta",
-			ativo: false
+			ativo: true
 		},
 		{
+			codigo: "QUINTA",
 			descricao: "Quinta",
-			ativo: false
+			ativo: true
 		},
 		{
+			codigo: "SEXTA",
 			descricao: "Sexta",
-			ativo: false
+			ativo: true
 		},
 		{
+			codigo: "SABADO",
 			descricao: "Sabado",
-			ativo: false
+			ativo: true
 		},
 		{
+			codigo: "DOMINGO",
 			descricao: "Domingo",
-			ativo: false
+			ativo: true
 		}
 	]);
 
-	const x = diasDaSemana[0];
+	const [refeicoes, setRefeicoes] = useState<RefeicaoProps[]>([]);
 
 	const {
 		handleSubmit,
 		control,
-		formState: { errors },
+		formState: { errors, isLoading },
 		register,
-		setValue,
 	} = useForm();
 
 	const [isOpenDialog, setIsOpenDialog] = useState(false);
@@ -78,16 +96,6 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
-	const [diasSelecionados, setDiasSelecionados] = useState<Array<string>>([]);
-
-	const selecionarDia = (dia: string) => {
-		setDiasSelecionados((prev) =>
-			!prev.includes(dia)
-				? (prev = [...diasSelecionados, dia])
-				: (prev = prev.filter((dias) => dias !== dia))
-		);
-	};
 
 	async function buscarPacienteDoAtendimento(idAtendimento: number) {
 
@@ -121,18 +129,24 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 	};
 
 	const onSubmit = (data: any) => {
-		console.log(data);
+
+		const dataRequest = {
+			segunda: diasDaSemana.find(dia => dia.codigo === "SEGUNDA")?.ativo,
+			terca: diasDaSemana.find(dia => dia.codigo === "TERCA")?.ativo,
+			quarta: diasDaSemana.find(dia => dia.codigo === "QUARTA")?.ativo,
+			quinta: diasDaSemana.find(dia => dia.codigo === "QUINTA")?.ativo,
+			sexta: diasDaSemana.find(dia => dia.codigo === "SEXTA")?.ativo,
+			sabado: diasDaSemana.find(dia => dia.codigo === "SABADO")?.ativo,
+			domingo: diasDaSemana.find(dia => dia.codigo === "DOMINGO")?.ativo,
+			descricao: data.descricao
+		};
+
+
 	};
 
 	const onSave = () => {
-		dispatch(setMode('search'));
-		navigate('/pacientes');
-		console.log('Dados salvo com sucesso!');
-	};
 
-	useEffect(() => {
-		setValue('diasSemana', diasSelecionados);
-	}, [diasSelecionados]);
+	};
 
 	const dialogContent = (mode: string) => {
 		if (mode === 'finish')
@@ -195,21 +209,31 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 						<h3>Dias da semana:</h3>
 					</div>
 					<div className="flex justify-content-between mt-3">
-						{diasDaSemana.map((diaDaSemana: DiaSemanaProps) => {
+						{diasDaSemana.map((diaDaSemana, index) => {
 							return (
 								<Controller
 									name="diasSemana"
-									// key={index}
+									key={index}
 									control={control}
 									render={({ field, fieldState }) => (
 										<div className="flex flex-column align-items-center gap-2">
 											<ToggleButton
 												offLabel={diaDaSemana.descricao}
 												onLabel={diaDaSemana.descricao}
-												checked={diasSelecionados.includes(diaDaSemana.ativo)}
-											// onChange={() => {
-											// 	selecionarDia(diaDaSemana);
-											// }}
+												checked={diaDaSemana.ativo}
+												onChange={() => {
+													const diasSemanaAtualizado = diasDaSemana.map(dia => {
+														if (dia === diaDaSemana) {
+															return {
+																...dia,
+																ativo: !dia.ativo
+															}
+														} else {
+															return dia;
+														}
+													})
+													setDiasDaSemana(diasSemanaAtualizado);
+												}}
 											/>
 											{getFormErrorMessage(field.name)}
 										</div>
@@ -311,30 +335,9 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 					</div>
 				</Card>
 
-				<div className="my-3 flex justify-content-between">
-					<div>
-						<Button
-							type="button"
-							onClick={() => {
-								dispatch(setMode('search'));
-								navigate('/pacientes');
-							}}
-						>
-							Voltar
-						</Button>
-					</div>
-					<div>
-						<Button
-							className="mr-3"
-							type="button"
-							onClick={() => {
-								onSave();
-							}}
-						>
-							Salvar
-						</Button>
-						<Button type="submit">Finalizar</Button>
-					</div>
+				<div className="my-3 flex justify-content-end">
+					<Button className='mr-3' label="Salvar" loading={isLoading} />
+					<Button type="submit">Finalizar</Button>
 				</div>
 			</form>
 
