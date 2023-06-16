@@ -13,8 +13,11 @@ export const EditAlimento = ({
 	alimentoSelected,
 	setAlimentoSelected,
 }: any) => {
+
 	const [alimentosAutocomplete, setAlimentosAutocomplete] = useState([]);
+
 	const [medidas, setMedidas] = useState([]);
+
 	const {
 		formState: { errors },
 		setValue,
@@ -42,13 +45,14 @@ export const EditAlimento = ({
 		const response = await api.get('medidas');
 		setMedidas(response.data);
 	};
+
 	const onSubmit = (data: any) => {
 		setAlimentosTable((prev: any) => [
 			...prev,
 			{
 				id: new Date().getMilliseconds(),
 				alimento: watch('alimento'),
-				quantidade: watch('Quantidade') + watch('Medida').descricao,
+				quantidade: watch('quantidade') + watch('medida').descricao,
 			},
 		]);
 		onHide();
@@ -92,20 +96,20 @@ export const EditAlimento = ({
 				<div className="col-4 flex flex-column  mx-2">
 					<label className="font-bold">Quantidade</label>
 					<Controller
-						name="Quantidade"
+						name="quantidade"
 						control={control}
 						rules={{ required: 'Campo é obrigatório' }}
 						render={({ field }) => (
 							<InputNumber
 								onValueChange={(e) => field.onChange(e)}
-								value={field.value}
+								// value={field.value}
 								locale="pt-BR"
 								minFractionDigits={2}
 								placeholder="Quantidade"
 								id="Quantidade"
 								className={classNames(
 									{
-										'p-invalid': errors.Quantidade,
+										'p-invalid': errors.quantidade,
 									},
 									'mt-2'
 								)}
@@ -117,14 +121,14 @@ export const EditAlimento = ({
 				<div className="col-4 flex flex-column">
 					<label className="font-bold">Medida</label>
 					<Controller
-						name="Medida"
+						name="medida"
 						control={control}
 						rules={{ required: 'Campo Obrigatório' }}
 						render={({ field, fieldState }) => (
 							<Dropdown
 								id={field.name}
 								value={field.value}
-								optionLabel="descrica"
+								optionLabel="descricao"
 								placeholder="Selecione uma medida"
 								options={medidas}
 								className={classNames(

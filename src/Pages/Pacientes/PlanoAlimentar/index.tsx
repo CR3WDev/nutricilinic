@@ -11,8 +11,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setMode } from '../../../Redux/mode';
-import { api } from '../../../Services/axios';
 import { Refeicoes } from '../Refeicoes';
+import { api } from '../../../Services/axios';
+
 
 interface PlanoAlimentarProps {
 	idAtendimento?: number;
@@ -25,6 +26,7 @@ interface DiaSemanaProps {
 }
 
 interface AlimentoRefeicaoProps {
+	descricao: string;
 	idAlimento: number;
 	quantidade: number;
 	idMedida: number;
@@ -38,47 +40,50 @@ interface RefeicaoProps {
 }
 
 export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
+
 	const [rowSelected, setRowSelected] = useState<any>();
 
 	const [diasDaSemana, setDiasDaSemana] = useState<DiaSemanaProps[]>([
 		{
-			codigo: 'SEGUNDA',
-			descricao: 'Segunda',
-			ativo: true,
+			codigo: "SEGUNDA",
+			descricao: "Segunda",
+			ativo: true
 		},
 		{
-			codigo: 'TERCA',
-			descricao: 'Terça',
-			ativo: true,
+			codigo: "TERCA",
+			descricao: "Terça",
+			ativo: true
 		},
 		{
-			codigo: 'QUARTA',
-			descricao: 'Quarta',
-			ativo: true,
+			codigo: "QUARTA",
+			descricao: "Quarta",
+			ativo: true
 		},
 		{
-			codigo: 'QUINTA',
-			descricao: 'Quinta',
-			ativo: true,
+			codigo: "QUINTA",
+			descricao: "Quinta",
+			ativo: true
 		},
 		{
-			codigo: 'SEXTA',
-			descricao: 'Sexta',
-			ativo: true,
+			codigo: "SEXTA",
+			descricao: "Sexta",
+			ativo: true
 		},
 		{
-			codigo: 'SABADO',
-			descricao: 'Sabado',
-			ativo: true,
+			codigo: "SABADO",
+			descricao: "Sabado",
+			ativo: true
 		},
 		{
-			codigo: 'DOMINGO',
-			descricao: 'Domingo',
-			ativo: true,
-		},
+			codigo: "DOMINGO",
+			descricao: "Domingo",
+			ativo: true
+		}
 	]);
 
 	const [refeicoes, setRefeicoes] = useState<RefeicaoProps[]>([]);
+
+	const [refeicao, setRefeicao] = useState<RefeicaoProps>();
 
 	const {
 		handleSubmit,
@@ -95,6 +100,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 	const navigate = useNavigate();
 
 	async function buscarPacienteDoAtendimento(idAtendimento: number) {
+
 		const response = await api.get(`/atendimentos/${idAtendimento}/paciente`);
 		const { data } = response;
 		setRowSelected({
@@ -106,9 +112,19 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 		});
 	}
 
+	async function buscarPlanoAlimentarDoAtendimento(idAtendimento: number) {
+
+	}
+
 	useEffect(() => {
 		if (idAtendimento) {
 			buscarPacienteDoAtendimento(idAtendimento);
+		}
+	}, [idAtendimento]);
+
+	useEffect(() => {
+		if (idAtendimento) {
+			buscarPlanoAlimentarDoAtendimento(idAtendimento);
 		}
 	}, [idAtendimento]);
 
@@ -125,19 +141,24 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 	};
 
 	const onSubmit = (data: any) => {
+
 		const dataRequest = {
-			segunda: diasDaSemana.find((dia) => dia.codigo === 'SEGUNDA')?.ativo,
-			terca: diasDaSemana.find((dia) => dia.codigo === 'TERCA')?.ativo,
-			quarta: diasDaSemana.find((dia) => dia.codigo === 'QUARTA')?.ativo,
-			quinta: diasDaSemana.find((dia) => dia.codigo === 'QUINTA')?.ativo,
-			sexta: diasDaSemana.find((dia) => dia.codigo === 'SEXTA')?.ativo,
-			sabado: diasDaSemana.find((dia) => dia.codigo === 'SABADO')?.ativo,
-			domingo: diasDaSemana.find((dia) => dia.codigo === 'DOMINGO')?.ativo,
-			descricao: data.descricao,
+			segunda: diasDaSemana.find(dia => dia.codigo === "SEGUNDA")?.ativo,
+			terca: diasDaSemana.find(dia => dia.codigo === "TERCA")?.ativo,
+			quarta: diasDaSemana.find(dia => dia.codigo === "QUARTA")?.ativo,
+			quinta: diasDaSemana.find(dia => dia.codigo === "QUINTA")?.ativo,
+			sexta: diasDaSemana.find(dia => dia.codigo === "SEXTA")?.ativo,
+			sabado: diasDaSemana.find(dia => dia.codigo === "SABADO")?.ativo,
+			domingo: diasDaSemana.find(dia => dia.codigo === "DOMINGO")?.ativo,
+			descricao: data.descricao
 		};
+
+
 	};
 
-	const onSave = () => {};
+	const onSave = () => {
+
+	};
 
 	const dialogContent = (mode: string) => {
 		if (mode === 'finish')
@@ -213,18 +234,16 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 												onLabel={diaDaSemana.descricao}
 												checked={diaDaSemana.ativo}
 												onChange={() => {
-													const diasSemanaAtualizado = diasDaSemana.map(
-														(dia) => {
-															if (dia === diaDaSemana) {
-																return {
-																	...dia,
-																	ativo: !dia.ativo,
-																};
-															} else {
-																return dia;
+													const diasSemanaAtualizado = diasDaSemana.map(dia => {
+														if (dia === diaDaSemana) {
+															return {
+																...dia,
+																ativo: !dia.ativo
 															}
+														} else {
+															return dia;
 														}
-													);
+													})
 													setDiasDaSemana(diasSemanaAtualizado);
 												}}
 											/>
@@ -285,7 +304,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 												<div className="flex align-items-center">
 													<div className="flex flex-column">
 														<span className="vertical-align-middle">
-															{refeicao.nome}
+															{refeicao.descricao}
 														</span>
 														<span className="font-normal mt-1">
 															{refeicao.horario}
@@ -319,7 +338,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 										}
 									>
 										{refeicao.alimentos.map((alimento, index) => {
-											return <p key={index}> - {alimento.nome}</p>;
+											return <p key={index}> - {alimento.descricao}</p>;
 										})}
 									</AccordionTab>
 								);
@@ -329,7 +348,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 				</Card>
 
 				<div className="my-3 flex justify-content-end">
-					<Button className="mr-3" label="Salvar" loading={isLoading} />
+					<Button className='mr-3' label="Salvar" loading={isLoading} />
 					<Button type="submit">Finalizar</Button>
 				</div>
 			</form>
