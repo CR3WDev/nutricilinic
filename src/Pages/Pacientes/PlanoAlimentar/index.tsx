@@ -15,8 +15,20 @@ import { Refeicoes } from '../Refeicoes';
 import { api } from '../../../Services/axios';
 
 
-interface PlanoAlimentarProps {
+interface PlanoAlimentarScreemProps {
 	idAtendimento?: number;
+}
+
+interface PlanoAlimentarProps {
+	id: number;
+	descricao: string;
+	segunda: boolean;
+	terca: boolean;
+	quarta: boolean;
+	quinta: boolean;
+	sexta: boolean
+	sabado: boolean;
+	domingo: boolean;
 }
 
 interface DiaSemanaProps {
@@ -39,7 +51,7 @@ interface RefeicaoProps {
 	observacao: string;
 }
 
-export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
+export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => {
 
 	const [rowSelected, setRowSelected] = useState<any>();
 
@@ -80,6 +92,8 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 			ativo: true
 		}
 	]);
+
+	const [planoAlimentar, setPlanoAlimentar] = useState<PlanoAlimentarProps>();
 
 	const [refeicoes, setRefeicoes] = useState<RefeicaoProps[]>([]);
 
@@ -140,9 +154,9 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 		}
 	};
 
-	const onSubmit = (data: any) => {
+	const onSubmit = async (formData: any) => {
 
-		const dataRequest = {
+		const data = {
 			segunda: diasDaSemana.find(dia => dia.codigo === "SEGUNDA")?.ativo,
 			terca: diasDaSemana.find(dia => dia.codigo === "TERCA")?.ativo,
 			quarta: diasDaSemana.find(dia => dia.codigo === "QUARTA")?.ativo,
@@ -150,8 +164,12 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 			sexta: diasDaSemana.find(dia => dia.codigo === "SEXTA")?.ativo,
 			sabado: diasDaSemana.find(dia => dia.codigo === "SABADO")?.ativo,
 			domingo: diasDaSemana.find(dia => dia.codigo === "DOMINGO")?.ativo,
-			descricao: data.descricao
+			descricao: formData.descricao,
+			refeicoes
 		};
+
+		const response = api.post(`/atendimentos/${idAtendimento}/plano-alimentar`, data);
+
 
 
 	};
