@@ -26,17 +26,43 @@ interface DiaSemanaProps {
 }
 
 export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
+
+	console.log(idAtendimento)
+
 	const [rowSelected, setRowSelected] = useState<any>();
 
-	const diasDaSemana = [
-		'Segunda',
-		'Terça',
-		'Quarta',
-		'Quinta',
-		'Sexta',
-		'Sábado',
-		'Domingo',
-	];
+	const diasDaSemana = useState<DiaSemanaProps[]>([
+		{
+			descricao: "Segunda",
+			ativo: false
+		},
+		{
+			descricao: "Terça",
+			ativo: false
+		},
+		{
+			descricao: "Quarta",
+			ativo: false
+		},
+		{
+			descricao: "Quinta",
+			ativo: false
+		},
+		{
+			descricao: "Sexta",
+			ativo: false
+		},
+		{
+			descricao: "Sabado",
+			ativo: false
+		},
+		{
+			descricao: "Domingo",
+			ativo: false
+		}
+	]);
+
+	const x = diasDaSemana[0];
 
 	const {
 		handleSubmit,
@@ -139,9 +165,6 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 			);
 	};
 
-
-	console.log(rowSelected)
-
 	return (
 		<div>
 			<h1>Refeições</h1>
@@ -172,21 +195,21 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarProps) => {
 						<h3>Dias da semana:</h3>
 					</div>
 					<div className="flex justify-content-between mt-3">
-						{diasDaSemana.map((diaDaSemana, index) => {
+						{diasDaSemana.map((diaDaSemana: DiaSemanaProps) => {
 							return (
 								<Controller
 									name="diasSemana"
-									key={index}
+									// key={index}
 									control={control}
 									render={({ field, fieldState }) => (
 										<div className="flex flex-column align-items-center gap-2">
 											<ToggleButton
-												offLabel={diaDaSemana}
-												onLabel={diaDaSemana}
-												checked={diasSelecionados.includes(diaDaSemana)}
-												onChange={() => {
-													selecionarDia(diaDaSemana);
-												}}
+												offLabel={diaDaSemana.descricao}
+												onLabel={diaDaSemana.descricao}
+												checked={diasSelecionados.includes(diaDaSemana.ativo)}
+											// onChange={() => {
+											// 	selecionarDia(diaDaSemana);
+											// }}
 											/>
 											{getFormErrorMessage(field.name)}
 										</div>

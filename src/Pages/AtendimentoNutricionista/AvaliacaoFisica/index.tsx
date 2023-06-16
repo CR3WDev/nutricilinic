@@ -39,6 +39,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 		control,
 		setValue,
 		handleSubmit,
+		reset
 	} = useForm<FormData>();
 
 	const getFormErrorMessage = (errors: any) => {
@@ -52,13 +53,29 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 		setResultadoAvalicao(response.data.resultados);
 	};
 
+	async function buscarAvaliacaoFisicaExistente(idAtendimento: number) {
+		try {
+			const response = await api.get(`/atendimentos/${idAtendimento}/avaliacao-fisica`);
+			const { data } = response;
+			reset(data);
+		} catch (error) {
+			console.log(error);
+			return;
+		}
+	}
 
 	useEffect(() => {
 		setValue('tipoComposicaoCorporal', 'PREGAS_CUTANEAS');
 	}, []);
 
 
-	console.log(idAtendimento);
+	useEffect(() => {
+		if (idAtendimento) {
+			buscarAvaliacaoFisicaExistente(idAtendimento);
+		}
+	}, [idAtendimento]);
+
+	console.log(idAtendimento)
 
 	return (
 		<div>
@@ -67,7 +84,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					<div className="flex">
 						<div className="col-6 flex flex-column">
 							<label className="font-bold" htmlFor="altura">
-								Altura
+								Altura(m)
 							</label>
 							<Controller
 								name="altura"
@@ -76,6 +93,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Altura"
@@ -91,9 +109,10 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 							/>
 							{getFormErrorMessage(errors.altura)}
 						</div>
+
 						<div className="col-6 flex flex-column">
 							<label className="font-bold" htmlFor="peso">
-								Peso
+								Peso(Kg)
 							</label>
 							<Controller
 								name="peso"
@@ -102,6 +121,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Peso"
@@ -119,11 +139,12 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 						</div>
 					</div>
 				</Fieldset>
+
 				<Fieldset className="mt-3" legend={'Circunferências'}>
 					<div className="flex">
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="bracoEsquerdoRelaxado">
-								Braço Esquerdo Relaxado
+								Braço Esquerdo Relaxado(cm)
 							</label>
 
 							<Controller
@@ -133,13 +154,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Braço Esquerdo Relaxado"
 										id="bracoEsquerdoRelaxado"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.bracoEsquerdoRelaxado,
 											},
 											'mt-2'
 										)}
@@ -151,7 +173,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="bracoDireitoRelaxado">
-								Braço Direito Relaxado
+								Braço Direito Relaxado(cm)
 							</label>
 
 							<Controller
@@ -161,13 +183,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Braço Direito Relaxado"
 										id="bracoDireitoRelaxado"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.bracoDireitoRelaxado,
 											},
 											'mt-2'
 										)}
@@ -178,7 +201,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 						</div>
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="bracoEsquerdoContraido">
-								Braço Esquerdo Contraído
+								Braço Esquerdo Contraído(cm)
 							</label>
 							<Controller
 								name="bracoEsquerdoContraido"
@@ -187,13 +210,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Braço Esquerdo contraído"
 										id="bracoEsquerdoContraido"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.bracoEsquerdoContraido,
 											},
 											'mt-2'
 										)}
@@ -206,7 +230,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					<div className="flex">
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="bracoDireitoContraido">
-								Braço Direto Contraído
+								Braço Direto Contraído(cm)
 							</label>
 
 							<Controller
@@ -216,13 +240,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Braço Direito contraído"
 										id="bracoEsquerdoContraido"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.bracoDireitoContraido,
 											},
 											'mt-2'
 										)}
@@ -234,7 +259,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="antebracoEsquerdo">
-								Antebraço Esquerdo
+								Antebraço Esquerdo(cm)
 							</label>
 
 							<Controller
@@ -244,13 +269,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Antebraço esquerdo"
 										id="antebracoEsquerdo"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.antebracoEsquerdo,
 											},
 											'mt-2'
 										)}
@@ -262,7 +288,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="antebracoDireito">
-								Antebraco Direito
+								Antebraco Direito(cm)
 							</label>
 
 							<Controller
@@ -272,13 +298,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Antebraço direito"
 										id="antebracoDireito"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.antebracoDireito,
 											},
 											'mt-2'
 										)}
@@ -291,7 +318,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					<div className="flex">
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="punhoEsquerdo">
-								Punho Esquerdo
+								Punho Esquerdo(cm)
 							</label>
 
 							<Controller
@@ -301,13 +328,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Punho esquerdo"
 										id="punhoEsquerdo"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.punhoEsquerdo,
 											},
 											'mt-2'
 										)}
@@ -319,7 +347,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="punhoDireito">
-								Punho Direito
+								Punho Direito(cm)
 							</label>
 
 							<Controller
@@ -329,13 +357,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Punho direito"
 										id="punhoDireito"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.punhoDireito,
 											},
 											'mt-2'
 										)}
@@ -424,13 +453,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Bíceps"
 										id="biceps"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.biceps,
 											},
 											'mt-2'
 										)}
@@ -452,13 +482,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Abnominal"
 										id="abdominal"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.abdominal,
 											},
 											'mt-2'
 										)}
@@ -480,13 +511,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Tríceps"
 										id="triceps"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.triceps,
 											},
 											'mt-2'
 										)}
@@ -509,13 +541,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Suprailíaca"
 										id="triceps"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.suprailiaca,
 											},
 											'mt-2'
 										)}
@@ -527,7 +560,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="axiliarMedia">
-								Axiliar Média
+								Axilar Média
 							</label>
 
 							<Controller
@@ -537,13 +570,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Axilar média"
 										id="triceps"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.axilarMedia,
 											},
 											'mt-2'
 										)}
@@ -565,13 +599,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Subscapular"
 										id="subscapular"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.subscapular,
 											},
 											'mt-2'
 										)}
@@ -595,13 +630,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Tórax"
 										id="torax"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.torax,
 											},
 											'mt-2'
 										)}
@@ -623,13 +659,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Coxa"
 										id="coxa"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.coxa,
 											},
 											'mt-2'
 										)}
@@ -651,13 +688,14 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								render={({ field }) => (
 									<InputNumber
 										onValueChange={(e) => field.onChange(e)}
+										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
 										placeholder="Panturrilha medial"
 										id="torax"
 										className={classNames(
 											{
-												'p-invalid': errors.peso,
+												'p-invalid': errors.panturrilhaMedial,
 											},
 											'mt-2'
 										)}
