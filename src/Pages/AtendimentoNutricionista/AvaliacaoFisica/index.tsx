@@ -443,7 +443,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					<div className="flex">
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="biceps">
-								Bíceps
+								Bíceps(mm)
 							</label>
 
 							<Controller
@@ -472,7 +472,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="abdominal">
-								Abdominal
+								Abdominal(mm)
 							</label>
 
 							<Controller
@@ -485,7 +485,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
-										placeholder="Abnominal"
+										placeholder="Abdominal"
 										id="abdominal"
 										className={classNames(
 											{
@@ -501,7 +501,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="triceps">
-								Tríceps
+								Tríceps(mm)
 							</label>
 
 							<Controller
@@ -531,7 +531,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					<div className="flex">
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="suprailíaca">
-								Suprailíaca
+								Suprailíaca(mm)
 							</label>
 
 							<Controller
@@ -560,7 +560,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="axiliarMedia">
-								Axilar Média
+								Axilar Média(mm)
 							</label>
 
 							<Controller
@@ -589,7 +589,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="subscapular">
-								Subscapular
+								Subscapular(mm)
 							</label>
 
 							<Controller
@@ -620,7 +620,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					<div className="flex">
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="torax">
-								Torax
+								Torax(mm)
 							</label>
 
 							<Controller
@@ -649,7 +649,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="Coxa">
-								Coxa
+								Coxa(mm)
 							</label>
 
 							<Controller
@@ -678,7 +678,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 
 						<div className="col-4 flex flex-column">
 							<label className="font-bold" htmlFor="panturrilhaMedial">
-								Panturrilha Medial
+								Panturrilha Medial(mm)
 							</label>
 
 							<Controller
