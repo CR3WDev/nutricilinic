@@ -23,6 +23,7 @@ export const InternalRoutes = () => {
 				element={<AtendimentoNutricionista />}
 			/>
 			<Route path="/plano-alimentar/:id" element={<PlanoAlimentar />} />
+			<Route path="/novo-plano-alimentar" element={<PlanoAlimentar />} />
 		</Routes>
 	);
 
