@@ -53,10 +53,7 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 					severity="danger"
 					className=" p-button-text mr-2"
 					onClick={() => {
-						const newAlimentosTable = alimentosTable.filter((item: any) => {
-							console.log(item);
-							item?.id != alimento.id;
-						});
+						const newAlimentosTable = alimentosTable;
 						// setAlimentosTable((prev: any) => {
 						// 	return prev.filter((item: any) => {
 						// 		item.id !== alimento.id;
