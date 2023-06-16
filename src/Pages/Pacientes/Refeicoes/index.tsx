@@ -8,13 +8,16 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Alimentos } from '../../../Utils/mock/alimentos';
 import { EditAlimento } from './EditAlimento';
 
 export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 	const [editMode, setEditMode] = useState(false);
 	const [alimentoSelected, setAlimentoSelected] = useState();
+	const [alimentosTable, setAlimentosTable] = useState([]);
 
+	useEffect(() => {
+		console.log(alimentosTable);
+	}, [alimentosTable]);
 	useEffect(() => {
 		setEditMode(false);
 	}, []);
@@ -127,9 +130,8 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 						</div>
 					</div>
 					<DataTable
-						responsiveLayout="scroll"
 						scrollable
-						value={Alimentos}
+						value={alimentosTable}
 						scrollHeight="400px"
 						emptyMessage="Nenhuma refeição cadastrada"
 					>
@@ -218,8 +220,9 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 			{editMode && (
 				<EditAlimento
 					onHide={() => {
-						handleOnClose();
+						setEditMode(false);
 					}}
+					setAlimentosTable={setAlimentosTable}
 					alimentoSelected={alimentoSelected}
 					setAlimentoSelected={setAlimentoSelected}
 				/>
