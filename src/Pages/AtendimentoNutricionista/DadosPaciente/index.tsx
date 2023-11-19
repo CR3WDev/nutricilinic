@@ -129,12 +129,16 @@ export const DadosPaciente = ({
 							id="cpf"
 							placeholder="CPF"
 							mask="999.999.999-99"
+							slotChar=''
 							maxLength={11}
+							autoClear={false}
 							{...register("cpf", {
 								required: true,
 								minLength: 11,
-								onBlur(event) {
-									handleChangeCpf(event.target.value)
+								onChange(event) {
+									if (event.target.value.length === 14) {
+										handleChangeCpf(event.target.value)
+									}
 								},
 							})}
 						/>

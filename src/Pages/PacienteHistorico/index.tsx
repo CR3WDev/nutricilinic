@@ -10,6 +10,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IPaciente } from '../../Models/pacientes';
 import { setMode } from '../../Redux/mode';
 import { api } from '../../Services/axios';
+import { Dialog } from 'primereact/dialog';
+import { InputMask } from 'primereact/inputmask';
+import addMinutes from 'date-fns/addMinutes'
+
+import { format, isBefore, isEqual, setHours, setMinutes, setSeconds } from 'date-fns';
+
+import { Chip } from 'primereact/chip';
+
 
 export const PacientesHistorico = () => {
 	const [historico, setHistorico] = useState([]);
@@ -17,7 +25,14 @@ export const PacientesHistorico = () => {
 	const navigate = useNavigate();
 	const { id, local } = useParams();
 
+	const [configurarNotificacoesVisible, setConfigurarNotificacoesVisible] = useState(false);
+	const [alertHidratacaoInicio, setAlertaHidratacaoInicio] = useState("");
+	const [alertHidratacaoFim, setAlertaHidratacaoFim] = useState("");
+	const [intervaloHidratacao, setIntervaloHidratacao] = useState("");
+	const [horariosHidratacao, setHorariosHidratacao] = useState<string[]>([]);
+
 	const dispatch = useDispatch();
+
 	const actionsColumns = (usuario: any) => {
 		return (
 			<div style={{ display: 'flex', width: '70px' }}>
@@ -35,10 +50,51 @@ export const PacientesHistorico = () => {
 		const response = await api.get(`/nutricionista/pacientes/${id}/historico`);
 		setHistorico(response.data);
 	}
+
 	const buscarPaciente = async () => {
 		const response = await api.get(`/pacientes/${id}`);
 		setPaciente(response.data);
 	};
+
+	function handleConfigurarNotificacoes() {
+		setConfigurarNotificacoesVisible(true);
+		setHorariosHidratacao([]);
+		setAlertaHidratacaoInicio("");
+		setAlertaHidratacaoFim("");
+		setIntervaloHidratacao("");
+
+		// Buscar configuração salva de horário
+	}
+
+	function handleConfirmarAlertaHidratacao() {
+
+		const horarioInicio = alertHidratacaoInicio.split(":");
+
+		let dataAtualInicio = setHours(new Date(), Number(horarioInicio[0]));
+		dataAtualInicio = setMinutes(dataAtualInicio, Number(horarioInicio[1]));
+		dataAtualInicio = setSeconds(dataAtualInicio, 0);
+
+		const horarioFim = alertHidratacaoFim.split(":");
+		let dataAtualFim = setHours(new Date(), Number(horarioFim[0]));
+		dataAtualFim = setMinutes(dataAtualFim, Number(horarioFim[1]));
+		dataAtualFim = setSeconds(dataAtualFim, 0);
+
+		let horarios = [alertHidratacaoInicio];
+
+		let proximoHorario = addMinutes(dataAtualInicio, Number(intervaloHidratacao));
+
+		while (isBefore(proximoHorario, dataAtualFim) || isEqual(proximoHorario, dataAtualFim)) {
+			horarios.push(format(proximoHorario, "HH:mm"));
+			proximoHorario = addMinutes(proximoHorario, Number(intervaloHidratacao));
+		}
+
+		setHorariosHidratacao(horarios);
+	}
+
+	async function handleConfirmarHorariosAlerta() {
+
+	}
+
 	useEffect(() => {
 		buscarPaciente();
 		buscarHistorico();
@@ -68,7 +124,18 @@ export const PacientesHistorico = () => {
 						</div>
 					</div>
 				</div>
+
+				<div>
+					<Button
+						label='Notificar'
+						icon="pi pi-bell"
+						iconPos="right"
+						onClick={handleConfigurarNotificacoes}
+					/>
+				</div>
+
 				<Divider />
+
 				<DataTable
 					value={historico}
 					scrollable
@@ -97,6 +164,51 @@ export const PacientesHistorico = () => {
 					</Button>
 				</div>
 			</Card>
+
+			<Dialog
+				header="Alerta de hidratação"
+				visible={configurarNotificacoesVisible}
+				style={{ width: '50vw' }}
+				onHide={() => setConfigurarNotificacoesVisible(false)}
+			>
+
+				<div className="flex gap-2">
+					<InputMask
+						className="w-2"
+						mask='99:99'
+						placeholder='Início'
+						value={alertHidratacaoInicio}
+						onChange={e => setAlertaHidratacaoInicio(e.target.value ?? "")}
+					/>
+
+					<InputMask
+						className="w-2"
+						mask='99:99'
+						placeholder='Fim'
+						value={alertHidratacaoFim}
+						onChange={(e) => setAlertaHidratacaoFim(e.target.value ?? "")}
+					/>
+
+					<InputMask
+						className="w-4"
+						mask='99'
+						placeholder='Intervalo(min)'
+						value={intervaloHidratacao}
+						onChange={(e) => setIntervaloHidratacao(e.target.value ?? "")}
+					/>
+
+					<Button label='Ok' onClick={handleConfirmarAlertaHidratacao} />
+				</div>
+
+				{horariosHidratacao.length > 0 ? (
+					<>
+						<div className="flex mt-2 gap-2 flex-wrap">
+							{horariosHidratacao.map(horario => <Chip key={horario} label={horario} />)}
+						</div>
+
+						<Button label='Confirmar' onClick={handleConfirmarHorariosAlerta} className='mt-4' /></>
+				) : null}
+			</Dialog>
 		</section>
 	);
 };

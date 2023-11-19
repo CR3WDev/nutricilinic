@@ -6,19 +6,17 @@ import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { ToggleButton } from 'primereact/togglebutton';
 import { classNames } from 'primereact/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setMode } from '../../../Redux/mode';
-import { Refeicoes } from '../Refeicoes';
+import { RefeicaoModal } from '../RefeicaoModal';
 import { api } from '../../../Services/axios';
-
-
+import { Toast } from 'primereact/toast';
 interface PlanoAlimentarScreemProps {
 	idAtendimento?: number;
 }
-
 interface PlanoAlimentarProps {
 	id: number;
 	descricao: string;
@@ -29,26 +27,29 @@ interface PlanoAlimentarProps {
 	sexta: boolean
 	sabado: boolean;
 	domingo: boolean;
+	refeicoes: RefeicaoProps[];
 }
-
 interface DiaSemanaProps {
 	codigo: string;
 	descricao: string;
 	ativo: boolean;
 }
-
-interface AlimentoRefeicaoProps {
-	descricao: string;
+export interface AlimentoRefeicaoProps {
+	descricao?: string;
+	descricaoMedida?: string;
 	idAlimento: number;
 	quantidade: number;
 	idMedida: number;
 }
-
-interface RefeicaoProps {
+export interface RefeicaoProps {
 	descricao: string;
 	horario: string;
 	alimentos: AlimentoRefeicaoProps[];
 	observacao: string;
+}
+
+interface FormData {
+	descricao: string;
 }
 
 export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => {
@@ -93,25 +94,23 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 		}
 	]);
 
-	const [planoAlimentar, setPlanoAlimentar] = useState<PlanoAlimentarProps>();
-
 	const [refeicoes, setRefeicoes] = useState<RefeicaoProps[]>([]);
-
-	const [refeicao, setRefeicao] = useState<RefeicaoProps>();
+	const [refeicaoSelected, setRefeicaoSelected] = useState<RefeicaoProps>();
+	const [refeicaoSelectedIndex, setRefeicaoSelectedIndex] = useState<number>();
 
 	const {
 		handleSubmit,
-		control,
 		formState: { errors, isLoading },
 		register,
-	} = useForm();
+	} = useForm<FormData>();
 
 	const [isOpenDialog, setIsOpenDialog] = useState(false);
 	const [openRefeicoes, setOpenRefeicoes] = useState(false);
-	const [refeicaoSelected, setRefeicaoSelected] = useState<any>();
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const toast = useRef<any>(null);
 
 	async function buscarPacienteDoAtendimento(idAtendimento: number) {
 
@@ -154,7 +153,14 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 		}
 	};
 
-	const onSubmit = async (formData: any) => {
+	async function onSubmit(formData: FormData) {
+		if (refeicoes.length === 0) {
+			return toast.current?.show({
+				severity: 'info',
+				summary: 'Atenção',
+				detail: "Adicione pelo menos uma refeição ao plano"
+			});
+		}
 
 		const data = {
 			segunda: diasDaSemana.find(dia => dia.codigo === "SEGUNDA")?.ativo,
@@ -168,15 +174,30 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 			refeicoes
 		};
 
-		const response = api.post(`/atendimentos/${idAtendimento}/plano-alimentar`, data);
+		try {
+			await api.post(`/atendimentos/${idAtendimento}/plano-alimentar`, data);
 
+			navigate("/main")
 
+			toast.current?.show({
+				severity: 'success',
+				summary: 'Sucesso',
+				detail: "Plano alimentar cadastrado com sucesso"
+			});
 
+		} catch (error) {
+			toast.current?.show({
+				severity: 'error',
+				summary: 'Erro',
+				detail: "Falha ao salvar"
+			});
+		}
 	};
 
-	const onSave = () => {
 
-	};
+	function handleAddRefeicao(novaRefeicao: RefeicaoProps) {
+		setRefeicoes([...refeicoes, novaRefeicao]);
+	}
 
 	const dialogContent = (mode: string) => {
 		if (mode === 'finish')
@@ -209,8 +230,19 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 			);
 	};
 
+	function handleRemoverRefeicao(index: number) {
+		const refeicoesAtualizadas = refeicoes.toSpliced(index, 1);
+		setRefeicoes(refeicoesAtualizadas);
+	}
+
+	function handleReplaceRefeicao(refeicao: RefeicaoProps) {
+		const refeicoesAtualizadas = refeicoes.toSpliced(refeicaoSelectedIndex!, 1, refeicao);
+		setRefeicoes(refeicoesAtualizadas);
+	}
+
 	return (
 		<div>
+			<Toast ref={toast} />
 			<h1>Refeições</h1>
 			<div className="h-full flex align-items-center w-full">
 				<Avatar
@@ -238,39 +270,30 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 					<div>
 						<h3>Dias da semana:</h3>
 					</div>
+
 					<div className="flex justify-content-between mt-3">
-						{diasDaSemana.map((diaDaSemana, index) => {
-							return (
-								<Controller
-									name="diasSemana"
-									key={index}
-									control={control}
-									render={({ field, fieldState }) => (
-										<div className="flex flex-column align-items-center gap-2">
-											<ToggleButton
-												offLabel={diaDaSemana.descricao}
-												onLabel={diaDaSemana.descricao}
-												checked={diaDaSemana.ativo}
-												onChange={() => {
-													const diasSemanaAtualizado = diasDaSemana.map(dia => {
-														if (dia === diaDaSemana) {
-															return {
-																...dia,
-																ativo: !dia.ativo
-															}
-														} else {
-															return dia;
-														}
-													})
-													setDiasDaSemana(diasSemanaAtualizado);
-												}}
-											/>
-											{getFormErrorMessage(field.name)}
-										</div>
-									)}
+						{diasDaSemana.map((diaDaSemana) => (
+							<div className="flex flex-column align-items-center gap-2">
+								<ToggleButton
+									offLabel={diaDaSemana.descricao}
+									onLabel={diaDaSemana.descricao}
+									checked={diaDaSemana.ativo}
+									onChange={() => {
+										const diasSemanaAtualizado = diasDaSemana.map(dia => {
+											if (dia === diaDaSemana) {
+												return {
+													...dia,
+													ativo: !dia.ativo
+												}
+											} else {
+												return dia;
+											}
+										})
+										setDiasDaSemana(diasSemanaAtualizado);
+									}}
 								/>
-							);
-						})}
+							</div>
+						))}
 					</div>
 				</Card>
 
@@ -305,14 +328,16 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 									label="adicionar"
 									onClick={() => {
 										setOpenRefeicoes(true);
+										setRefeicaoSelected(undefined);
+										setRefeicaoSelectedIndex(undefined);
 									}}
-								></Button>
+								/>
 							</div>
 						</div>
 					</div>
 
 					<div className="mt-3">
-						<Accordion activeIndex={0}>
+						<Accordion>
 							{refeicoes.map((refeicao, index) => {
 								return (
 									<AccordionTab
@@ -324,33 +349,34 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 														<span className="vertical-align-middle">
 															{refeicao.descricao}
 														</span>
+
 														<span className="font-normal mt-1">
 															{refeicao.horario}
 														</span>
 													</div>
 												</div>
+
 												<div className="ml-2">
 													<Button
 														text
 														icon="pi pi-pencil"
 														severity="success"
 														type="button"
-														onClick={(event) => {
+														onClick={() => {
 															setRefeicaoSelected(refeicao);
+															setRefeicaoSelectedIndex(index);
 															setOpenRefeicoes(true);
-															event.stopPropagation();
 														}}
-													></Button>
+													/>
+
 													<Button
 														text
 														className="ml-2"
 														type="button"
 														icon="pi pi-trash"
 														severity="danger"
-														onClick={(event) => {
-															event.stopPropagation();
-														}}
-													></Button>
+														onClick={() => handleRemoverRefeicao(index)}
+													/>
 												</div>
 											</div>
 										}
@@ -366,20 +392,22 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 				</Card>
 
 				<div className="my-3 flex justify-content-end">
-					<Button className='mr-3' label="Salvar" loading={isLoading} />
-					<Button type="submit">Finalizar</Button>
+					<Button className='mr-3' label="Finalizar" loading={isLoading} />
+					{/* <Button type="submit">Finalizar</Button> */}
 				</div>
 			</form>
 
-			<Refeicoes
-				setRowSelected={setRefeicaoSelected}
-				rowSelected={refeicaoSelected}
+			<RefeicaoModal
 				visible={openRefeicoes}
 				onHide={() => {
 					setOpenRefeicoes(false);
 					setRefeicaoSelected(undefined);
 				}}
+				refeicaoSelected={refeicaoSelected}
+				addRefeicao={handleAddRefeicao}
+				replaceRefeicao={handleReplaceRefeicao}
 			/>
+
 			<Dialog
 				visible={isOpenDialog}
 				closable={false}
@@ -388,7 +416,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 					setIsOpenDialog(false);
 				}}
 				children={dialogContent('finish')}
-			></Dialog>
+			/>
 		</div>
 	);
 };

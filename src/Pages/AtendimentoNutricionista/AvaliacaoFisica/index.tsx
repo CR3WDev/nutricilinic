@@ -75,11 +75,11 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 		}
 	}, [idAtendimento]);
 
-	console.log(idAtendimento)
+	console.log(errors)
 
 	return (
 		<div>
-			<form action="" onSubmit={handleSubmit(onSubmit)}>
+			<form onSubmit={handleSubmit(onSubmit)}>
 				<Fieldset>
 					<div className="flex">
 						<div className="col-6 flex flex-column">
@@ -92,7 +92,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -120,7 +120,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -153,7 +153,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -182,7 +182,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -209,7 +209,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -239,7 +239,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -268,7 +268,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -297,7 +297,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -327,7 +327,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -356,7 +356,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -452,7 +452,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -481,7 +481,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -510,7 +510,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -540,7 +540,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -569,7 +569,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -598,7 +598,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -629,7 +629,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -658,7 +658,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -687,7 +687,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 								rules={{ required: "Campo é obrigatório" }}
 								render={({ field }) => (
 									<InputNumber
-										onValueChange={(e) => field.onChange(e)}
+										onChange={(e) => field.onChange(e.value)}
 										value={field.value}
 										locale='pt-BR'
 										minFractionDigits={2}
@@ -707,7 +707,7 @@ export const AvaliacaoFisica = ({ setActiveIndex, idAtendimento, setResultadoAva
 					</div>
 				</Fieldset>
 				<div className="flex justify-content-end">
-					<Button label="Continuar" loading={isLoading} />
+					<Button type='submit' label="Continuar" loading={isLoading} />
 				</div>
 			</form>
 		</div>

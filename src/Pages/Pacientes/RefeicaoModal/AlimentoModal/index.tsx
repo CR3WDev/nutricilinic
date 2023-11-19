@@ -6,30 +6,54 @@ import { classNames } from 'primereact/utils';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { api } from '../../../../Services/axios';
+import { AlimentoRefeicaoProps } from '../../PlanoAlimentar';
 
-export const EditAlimento = ({
-	setAlimentosTable,
+interface AlimentoProps {
+	id: number;
+	descricao: string;
+};
+
+interface MedidaProps {
+	id: number;
+	descricao: string;
+	descricaoApresentacao: string;
+}
+
+interface FormData {
+	alimento: AlimentoProps,
+	medida: MedidaProps,
+	quantidade: number;
+}
+
+interface AlimentoModalProps {
+	addAlimento: (alimento: AlimentoRefeicaoProps) => void;
+	onHide: () => void;
+
+}
+
+export const AlimentoModal = ({
+	addAlimento,
 	onHide,
-	alimentoSelected,
-	setAlimentoSelected,
-}: any) => {
-	const [alimentosAutocomplete, setAlimentosAutocomplete] = useState([]);
+	// alimentoSelected, 
+}: AlimentoModalProps) => {
 
-	const [medidas, setMedidas] = useState([]);
+	const [alimentosAutocomplete, setAlimentosAutocomplete] = useState<AlimentoProps[]>([]);
+
+	const [medidas, setMedidas] = useState<MedidaProps[]>([]);
 
 	const {
 		formState: { errors },
-		setValue,
+		// setValue,
 		handleSubmit,
-		watch,
+		// watch,
 		control,
-	} = useForm();
+	} = useForm<FormData>();
 
-	useEffect(() => {
-		if (!alimentoSelected) return;
-		setValue('alimento', alimentoSelected?.alimento);
-		setValue('quantidade', alimentoSelected?.quantidade);
-	}, [alimentoSelected]);
+	// useEffect(() => {
+	// 	if (!alimentoSelected) return;
+	// 	setValue('alimento', alimentoSelected?.alimento);
+	// 	setValue('quantidade', alimentoSelected?.quantidade);
+	// }, [alimentoSelected]);
 
 	const getFormErrorMessage = (errors: any) => {
 		if (errors?.type === 'required') {
@@ -37,23 +61,25 @@ export const EditAlimento = ({
 		}
 	};
 	const getAlimento = async (descricao: string) => {
-		const response = await api.get(`alimentos?descricao=${descricao}`);
+		const response = await api.get(`/alimentos?descricao=${descricao}`);
 		setAlimentosAutocomplete(response.data);
 	};
 	const getMedidas = async () => {
-		const response = await api.get('medidas');
+		const response = await api.get('/medidas');
 		setMedidas(response.data);
 	};
 
-	const onSubmit = (data: any) => {
-		setAlimentosTable((prev: any) => [
-			...prev,
-			{
-				id: new Date().getMilliseconds(),
-				alimento: watch('alimento')?.descricao || watch('alimento'),
-				quantidade: watch('quantidade') + ' ' + watch('medida').descricao,
-			},
-		]);
+	const onSubmit = (data: FormData) => {
+		const novoAlimento = {
+			descricao: data.alimento.descricao,
+			descricaoMedida: data.medida.descricaoApresentacao,
+			idAlimento: data.alimento.id,
+			quantidade: data.quantidade,
+			idMedida: data.medida.id
+		};
+
+		addAlimento(novoAlimento);
+
 		onHide();
 	};
 
@@ -63,66 +89,73 @@ export const EditAlimento = ({
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
-			<div className="flex">
+			<div className="flex flex-row gap-4">
 				<div className="flex flex-column">
 					<label className="font-bold">Alimento</label>
+
 					<Controller
 						name="alimento"
 						control={control}
 						rules={{ required: 'Alimento é Obrigatório' }}
-						render={({ field, fieldState }) => (
+						render={({ field }) => (
 							<AutoComplete
-								{...field}
-								field="descricao"
-								placeholder="alimento"
+								field='descricao'
+								inputId={field.name}
+								value={field.value}
+								placeholder="Alimento"
 								suggestions={alimentosAutocomplete}
+								onChange={field.onChange}
+								inputRef={field.ref}
 								completeMethod={(e) => {
 									if (e.query.length >= 3) getAlimento(e.query);
 								}}
-								id="alimento"
 								className={classNames(
 									{
 										'p-invalid': errors.alimento,
 									},
-									'mt-2 mx-2 w-12rem'
 								)}
 								aria-describedby="nomeCompleto-help"
-							></AutoComplete>
+							/>
 						)}
 					/>
 					{getFormErrorMessage(errors?.alimento)}
 				</div>
+
 				<div className="flex flex-column">
 					<label className="font-bold">Quantidade</label>
+
 					<Controller
 						name="quantidade"
 						control={control}
 						rules={{ required: 'Campo é obrigatório' }}
 						render={({ field }) => (
 							<InputNumber
-								onValueChange={(e) => field.onChange(e)}
+								id={field.name}
+								inputRef={field.ref}
+								value={field.value}
+								onChange={(e) => field.onChange(e.value)}
 								locale="pt-BR"
 								minFractionDigits={2}
 								placeholder="Quantidade"
-								id="Quantidade"
 								className={classNames(
 									{
 										'p-invalid': errors.quantidade,
 									},
-									'mt-2 mx-2 w-12rem'
 								)}
 							/>
 						)}
 					/>
 					{getFormErrorMessage(errors?.quantidade)}
 				</div>
+
 				<div className="flex flex-column">
 					<label className="font-bold">Medida</label>
+
 					<Controller
 						name="medida"
 						control={control}
 						rules={{ required: 'Campo Obrigatório' }}
-						render={({ field, fieldState }) => (
+						render={({ field }) => (
 							<Dropdown
 								id={field.name}
 								value={field.value}
@@ -131,18 +164,18 @@ export const EditAlimento = ({
 								options={medidas}
 								className={classNames(
 									{
-										'p-invalid': errors.Medida,
+										'p-invalid': errors.medida,
 									},
-									'mt-2 mx-2 w-12rem'
 								)}
 								focusInputRef={field.ref}
 								onChange={(e) => field.onChange(e.value)}
 							/>
 						)}
 					/>
-					{getFormErrorMessage(errors?.Medida)}
+					{getFormErrorMessage(errors?.medida)}
 				</div>
 			</div>
+
 			<div className="flex justify-content-end">
 				<Button
 					type="button"
@@ -150,12 +183,13 @@ export const EditAlimento = ({
 					className="mt-3"
 					onClick={() => {
 						onHide();
-						setAlimentoSelected(undefined);
+						// setAlimentoSelected(undefined);
 					}}
 				>
 					<i className="pi pi-times mr-2"></i>
 					Cancelar
 				</Button>
+
 				<Button text className="mt-3">
 					<i className="pi pi-check mr-2"></i>
 					Salvar

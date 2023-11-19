@@ -9,32 +9,47 @@ import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { EditAlimento } from './EditAlimento';
+import { AlimentoModal } from './AlimentoModal';
+import { AlimentoRefeicaoProps, RefeicaoProps } from '../PlanoAlimentar';
 
-export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
+interface RefeicaoModalProps {
+	visible: boolean;
+	onHide: () => void;
+	addRefeicao: (refeicao: RefeicaoProps) => void;
+	replaceRefeicao: (refeicao: RefeicaoProps) => void;
+	refeicaoSelected?: RefeicaoProps;
+}
+
+interface FormData {
+	horario: string;
+	descricao: string;
+	observacao: string;
+}
+
+export const RefeicaoModal = ({
+	visible,
+	onHide,
+	addRefeicao,
+	replaceRefeicao,
+	refeicaoSelected
+}: RefeicaoModalProps) => {
+
 	const [editMode, setEditMode] = useState(false);
-	const [alimentoSelected, setAlimentoSelected] = useState();
-	const [alimentosTable, setAlimentosTable] = useState([]);
+	const [alimentosAdicionados, setAlimentosAdicionados] = useState<AlimentoRefeicaoProps[]>([]);
+
 	const toast = useRef<any>(null);
 
-	useEffect(() => {
-		console.log(alimentosTable);
-	}, [alimentosTable]);
-	useEffect(() => {
-		setEditMode(false);
-	}, []);
 	const {
 		control,
 		formState: { errors },
 		register,
 		handleSubmit,
-		setValue,
 		reset,
-	} = useForm();
+		setValue
+	} = useForm<FormData>();
+
 	const handleOnClose = () => {
 		onHide();
-		reset();
-		setValue('horario', '');
 		setTimeout(() => {
 			setEditMode(false);
 		}, 500);
@@ -45,7 +60,7 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 		}
 	};
 
-	const actionsColumns = (alimento: any) => {
+	const actionsColumns = (rowIndex: number) => {
 		return (
 			<div style={{ display: 'flex', width: '70px' }}>
 				<Button
@@ -54,39 +69,72 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 					style={{ height: '20px' }}
 					severity="danger"
 					className=" p-button-text mr-2"
-					onClick={() => {
-						const novoArray = alimentosTable.filter(
-							(objeto: any) => objeto.id !== alimento.id
-						);
-						setAlimentosTable(novoArray);
-					}}
+					onClick={() => handleRemoverAlimento(rowIndex)}
 				/>
 			</div>
 		);
 	};
 
-	const onSubmit = (data: any) => {
-		if (alimentosTable.length <= 0)
+	function handleRemoverAlimento(index: number) {
+		const alimentosAtualizados = alimentosAdicionados.toSpliced(index, 1);
+		setAlimentosAdicionados(alimentosAtualizados);
+	}
+
+	async function handleAddAlimento(novoAlimento: AlimentoRefeicaoProps) {
+		setAlimentosAdicionados([...alimentosAdicionados, novoAlimento]);
+	}
+
+	const onSubmit = (data: FormData) => {
+		if (alimentosAdicionados.length <= 0) {
 			return toast.current?.show({
 				severity: 'error',
 				summary: 'Atenção',
 				detail: 'Deve ser adicionado pelo menos 1 alimento!',
 			});
-		console.log(data);
+		}
+
+		const novaRefeicao = {
+			horario: data.horario,
+			descricao: data.descricao,
+			observacao: data.observacao,
+			alimentos: alimentosAdicionados
+		};
+
+		if (refeicaoSelected) {
+			replaceRefeicao(novaRefeicao);
+		} else {
+			addRefeicao(novaRefeicao);
+		}
+
+		onHide();
 	};
 
+	function limparFormulario() {
+		reset();
+		setAlimentosAdicionados([]);
+	}
+
 	useEffect(() => {
-		if (!visible || !rowSelected) return;
-		setValue('descricao', rowSelected?.nome);
-		setValue('horario', rowSelected?.horario);
-		setValue('observacoes', rowSelected?.observacoes);
+		if (visible) {
+			limparFormulario();
+		}
 	}, [visible]);
+
+	useEffect(() => {
+		if (refeicaoSelected) {
+			setValue("horario", refeicaoSelected.horario);
+			setValue("descricao", refeicaoSelected.descricao);
+			setValue("observacao", refeicaoSelected.observacao);
+			setAlimentosAdicionados(refeicaoSelected.alimentos);
+		}
+	}, [refeicaoSelected]);
 
 	const showTable = () => {
 		if (editMode) return;
+
 		return (
 			<div>
-				<form action="" onSubmit={handleSubmit(onSubmit)}>
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="flex">
 						<div className="col-6">
 							<Controller
@@ -96,6 +144,7 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 								render={({ field, fieldState }) => (
 									<div className="flex flex-column">
 										<label htmlFor={field.name}>Horário</label>
+
 										<InputMask
 											id={field.name}
 											value={field.value}
@@ -107,6 +156,7 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 											mask="99:99"
 											placeholder="Horário"
 										/>
+
 										{getFormErrorMessage(errors?.horario)}
 									</div>
 								)}
@@ -116,6 +166,7 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 							<label className="font-bold" htmlFor="descricao">
 								Descricao
 							</label>
+
 							<InputText
 								placeholder="Descricao"
 								id="descricao"
@@ -133,20 +184,30 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 							{getFormErrorMessage(errors?.descricao)}
 						</div>
 					</div>
+
 					<DataTable
 						scrollable
-						value={alimentosTable}
+						value={alimentosAdicionados}
 						scrollHeight="400px"
-						emptyMessage="Nenhuma refeição cadastrada"
+						emptyMessage="Nenhum alimento adicionado"
 					>
-						<Column field="alimento" header="Alimento"></Column>
-						<Column field="quantidade" header="Quantidade"></Column>
 						<Column
-							body={(data) => actionsColumns(data)}
+							header="Alimento"
+							field='descricao'
+						/>
+
+						<Column
+							header="Quantidade"
+							body={alimento => `${alimento.quantidade}  ${alimento.descricaoMedida}`}
+						/>
+
+						<Column
+							body={(_, options) => actionsColumns(options.rowIndex)}
 							header={'ações'}
 							className="py-2"
 						/>
 					</DataTable>
+
 					<div className="flex justify-content-end">
 						<Button
 							type="button"
@@ -159,44 +220,41 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 							Adicionar Alimento
 						</Button>
 					</div>
+
 					<div className="col-12">
 						<label className="font-bold mb-2" htmlFor="observacoes">
 							Observações:
 						</label>
+
 						<InputTextarea
 							id="observacoes"
 							placeholder="Observações"
 							className={classNames(
 								{
-									'p-invalid': errors.observacoes,
+									'p-invalid': errors.observacao,
 								},
 								'mt-2 w-full'
 							)}
-							{...register('observacoes', {
-								required: true,
-							})}
+							{...register('observacao')}
 						/>
-						{getFormErrorMessage(errors.observacoes)}
+						{getFormErrorMessage(errors.observacao)}
 					</div>
+
 					<div className="flex justify-content-end">
 						<Button
 							type="button"
 							text
 							className="mt-3"
-							onClick={() => {
-								handleOnClose();
-							}}
+							onClick={handleOnClose}
 						>
 							<i className="pi pi-times mr-2"></i>
 							Cancelar
 						</Button>
+
 						<Button
 							text
 							type="submit"
 							className="mt-3"
-							onClick={() => {
-								console.log('salvar');
-							}}
 						>
 							<i className="pi pi-check mr-2"></i>
 							Salvar
@@ -206,9 +264,11 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 			</div>
 		);
 	};
+
 	return (
 		<>
 			<Toast ref={toast} />
+
 			<Dialog
 				draggable={false}
 				visible={visible}
@@ -220,13 +280,11 @@ export const Refeicoes = ({ visible, onHide, rowSelected }: any) => {
 				{showTable()}
 
 				{editMode && (
-					<EditAlimento
+					<AlimentoModal
 						onHide={() => {
 							setEditMode(false);
 						}}
-						setAlimentosTable={setAlimentosTable}
-						alimentoSelected={alimentoSelected}
-						setAlimentoSelected={setAlimentoSelected}
+						addAlimento={handleAddAlimento}
 					/>
 				)}
 			</Dialog>
