@@ -243,6 +243,7 @@ export const PlanoAlimentar = ({ idAtendimento }: PlanoAlimentarScreemProps) => 
 	return (
 		<div>
 			<Toast ref={toast} />
+
 			<h1>Refeições</h1>
 			<div className="h-full flex align-items-center w-full">
 				<Avatar

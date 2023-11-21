@@ -4,7 +4,7 @@ import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Divider } from 'primereact/divider';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IPaciente } from '../../Models/pacientes';
@@ -17,6 +17,7 @@ import addMinutes from 'date-fns/addMinutes'
 import { format, isBefore, isEqual, setHours, setMinutes, setSeconds } from 'date-fns';
 
 import { Chip } from 'primereact/chip';
+import { Toast } from 'primereact/toast';
 
 
 export const PacientesHistorico = () => {
@@ -30,6 +31,9 @@ export const PacientesHistorico = () => {
 	const [alertHidratacaoFim, setAlertaHidratacaoFim] = useState("");
 	const [intervaloHidratacao, setIntervaloHidratacao] = useState("");
 	const [horariosHidratacao, setHorariosHidratacao] = useState<string[]>([]);
+
+	const [isLoadingCadastroAlertas, setIsLoadingCadastroAlertas] = useState(false);
+	const toast = useRef<any>(null);
 
 	const dispatch = useDispatch();
 
@@ -63,10 +67,15 @@ export const PacientesHistorico = () => {
 		setAlertaHidratacaoFim("");
 		setIntervaloHidratacao("");
 
-		// Buscar configuração salva de horário
+		pesquisarHorariosAlerta();
 	}
 
-	function handleConfirmarAlertaHidratacao() {
+	async function pesquisarHorariosAlerta() {
+		const response = await api.get(`/alertas-hidratacao?idUsuario=${paciente?.id}`);
+		setHorariosHidratacao(response.data.map(item => item.horario));
+	}
+
+	function handlePrevisualizarHorarios() {
 
 		const horarioInicio = alertHidratacaoInicio.split(":");
 
@@ -92,7 +101,32 @@ export const PacientesHistorico = () => {
 	}
 
 	async function handleConfirmarHorariosAlerta() {
+		const data = {
+			idUsuario: paciente?.id,
+			horarios: horariosHidratacao
+		}
 
+		try {
+			setIsLoadingCadastroAlertas(true);
+			await api.post("/alertas-hidratacao", data);
+
+			toast.current?.show({
+				severity: 'success',
+				summary: 'Sucesso',
+				detail: "Alertas cadastrado com sucesso"
+			});
+
+			setConfigurarNotificacoesVisible(false);
+
+		} catch (error) {
+			toast.current?.show({
+				severity: 'error',
+				summary: 'Erro',
+				detail: "Falha ao salvar"
+			});
+		} finally {
+			setIsLoadingCadastroAlertas(false);
+		}
 	}
 
 	useEffect(() => {
@@ -102,7 +136,10 @@ export const PacientesHistorico = () => {
 
 	return (
 		<section>
+			<Toast ref={toast} />
+
 			<h1>Histórico do paciente</h1>
+
 			<Card className="mt-3">
 				<div className="h-full flex align-items-center w-full">
 					<Avatar
@@ -111,6 +148,7 @@ export const PacientesHistorico = () => {
 						size="xlarge"
 						shape="circle"
 					/>
+
 					<div className="my-3">
 						<div>
 							<span className="font-bold">{paciente?.nome}</span>
@@ -195,9 +233,12 @@ export const PacientesHistorico = () => {
 						placeholder='Intervalo(min)'
 						value={intervaloHidratacao}
 						onChange={(e) => setIntervaloHidratacao(e.target.value ?? "")}
+						autoClear={false}
+						slotChar=''
+
 					/>
 
-					<Button label='Ok' onClick={handleConfirmarAlertaHidratacao} />
+					<Button label='Ok' onClick={handlePrevisualizarHorarios} />
 				</div>
 
 				{horariosHidratacao.length > 0 ? (
@@ -206,7 +247,13 @@ export const PacientesHistorico = () => {
 							{horariosHidratacao.map(horario => <Chip key={horario} label={horario} />)}
 						</div>
 
-						<Button label='Confirmar' onClick={handleConfirmarHorariosAlerta} className='mt-4' /></>
+						<Button
+							label='Confirmar'
+							onClick={handleConfirmarHorariosAlerta}
+							className='mt-4'
+							loading={isLoadingCadastroAlertas}
+						/>
+					</>
 				) : null}
 			</Dialog>
 		</section>
